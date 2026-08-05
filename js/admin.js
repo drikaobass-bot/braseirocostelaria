@@ -1,5 +1,5 @@
 /* ============================================================
-   BRASEIRO COSTELARIA — admin.js (Versão Corrigida)
+   BRASEIRO COSTELARIA — admin.js
    Painel Administrativo com Firebase + LocalStorage + Compressão
    ============================================================ */
 
@@ -7,10 +7,49 @@
 
 let adminLogado = false;
 
+// ============================================================
+// SEGURANÇA: Criptografia para LocalStorage
+// ============================================================
+
+// Função para criptografar dados antes de salvar no LocalStorage
+function encryptData(data, key = 'braseiro_secure_2024') {
+  try {
+    const jsonStr = JSON.stringify(data);
+    let result = '';
+    for (let i = 0; i < jsonStr.length; i++) {
+      result += String.fromCharCode(
+        jsonStr.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+      );
+    }
+    return btoa(result);
+  } catch (e) {
+    console.error('Erro ao criptografar:', e);
+    return JSON.stringify(data);
+  }
+}
+
+// Função para descriptografar dados do LocalStorage
+function decryptData(encryptedData, key = 'braseiro_secure_2024') {
+  try {
+    const decoded = atob(encryptedData);
+    let result = '';
+    for (let i = 0; i < decoded.length; i++) {
+      result += String.fromCharCode(
+        decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+      );
+    }
+    return JSON.parse(result);
+  } catch (e) {
+    console.error('Erro ao descriptografar:', e);
+    return null;
+  }
+}
+
 /* ── Utilitários ───────────────────────────────────────────── */
 function saveLS(key, val) {
   try {
-    localStorage.setItem('braseiro_' + key, JSON.stringify(val));
+    const encrypted = encryptData(val);
+    localStorage.setItem('braseiro_' + key, encrypted);
   } catch (e) {
     console.warn('LocalStorage quota exceeded:', e.message);
     showToast('⚠️ Armazenamento cheio! Tente usar imagens menores.');
@@ -20,7 +59,9 @@ function saveLS(key, val) {
 function loadLS(key, def) {
   try { 
     const v = localStorage.getItem('braseiro_' + key); 
-    return v ? JSON.parse(v) : def; 
+    if (!v) return def;
+    const decrypted = decryptData(v);
+    return decrypted !== null ? decrypted : def;
   } catch { 
     return def; 
   }
