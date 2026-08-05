@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0d0d">
+  <meta name="description" content="Braseiro Costelaria — Costela assada no bafo. Encomendas para sexta, sábado, domingo e feriados. Peça pelo nosso cardápio digital.">
+  <meta name="keywords" content="braseiro costelaria, costela no bafo, churrasco artesanal, encomenda costela, cardápio digital">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Braseiro Costelaria">
+
+  <!-- Meta Tags Anti-Cache -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <!-- Open Graph / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Braseiro Costelaria — Cardápio Digital">
+  <meta property="og:description" content="Costela assada no bafo. Encomendas para sexta, sábado, domingo e feriados.">
+  <meta property="og:image" content="assets/logo/og-image.jpg">
+  <meta property="og:url" content="">
+  <meta property="og:locale" content="pt_BR">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Braseiro Costelaria — Cardápio Digital">
+  <meta name="twitter:description" content="Costela assada no bafo. Encomendas para sexta, sábado, domingo e feriados.">
+  <meta name="twitter:image" content="assets/logo/og-image.jpg">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Braseiro">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
+  <link rel="shortcut icon" href="assets/icons/favicon.ico">
+
+  <title>Braseiro Costelaria — Cardápio Digital</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── Navbar ──────────────────────────────────────────────── -->
+<nav id="navbar" role="navigation" aria-label="Navegação principal">
+  <div class="container nav-inner">
+    <a href="#" class="nav-logo" aria-label="Braseiro Costelaria - Início">
+      <img src="assets/logo/logo.png" alt="Logo Braseiro Costelaria" onerror="this.style.display='none'">
+      <div class="nav-logo-text">
+        Braseiro
+        <span>Costelaria</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="#cardapio">Cardápio</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#" id="btn-admin-nav" aria-label="Painel Administrativo">Admin</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Conteúdo Principal ──────────────────────────────────── -->
+<main id="main-content">
+
+  <!-- ── Hero ──────────────────────────────────────────────── -->
+  <section id="hero" aria-label="Apresentação">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <img
+        src="assets/logo/logo.png"
+        alt="Braseiro Costelaria"
+        class="hero-logo-img"
+        onerror="this.style.display='none'"
+      >
+      <h1 class="hero-title" id="hero-title">Braseiro Costelaria</h1>
+      <p class="hero-subtitle" id="hero-subtitle">Costela assada no bafo.</p>
+      <div class="hero-badges">
+        <span class="hero-badge" id="hero-badge1">🥩 Costelas artesanais.</span>
+        <span class="hero-badge" id="hero-badge2">📅 Encomendas para sexta, sábado, domingo e feriados.</span>
+        <span class="hero-badge" id="hero-badge3">⏳ Produção artesanal.</span>
+      </div>
+      <button class="btn-hero" id="btn-hero" aria-label="Ver cardápio">🔥 Fazer Pedido</button>
+    </div>
+  </section>
+
+  <!-- ── Cardápio ───────────────────────────────────────────── -->
+  <section id="cardapio" class="section" aria-label="Cardápio">
+    <div class="container">
+      <h2 class="section-title">Nosso Cardápio</h2>
+      <div class="section-divider"></div>
+
+      <!-- Filtros -->
+      <div class="filter-bar" role="group" aria-label="Filtrar por categoria">
+        <button class="filter-btn active" data-filter="todos">Todos</button>
+        <button class="filter-btn" data-filter="costelas">🥩 Carnes no Bafo</button>
+        <button class="filter-btn" data-filter="acompanhamentos">🍚 Acompanhamentos</button>
+        <button class="filter-btn" data-filter="bebidas">🥤 Bebidas</button>
+        <button class="filter-btn" data-filter="combos">🔥 Combos</button>
+      </div>
+
+      <!-- Grid de produtos -->
+      <div class="produtos-grid" id="produtos-grid" role="list" aria-label="Produtos disponíveis">
+        <!-- Renderizado via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Sobre ──────────────────────────────────────────────── -->
+  <section id="sobre" class="section" aria-label="Sobre a Braseiro Costelaria">
+    <div class="container">
+      <h2 class="section-title">Por que escolher a Braseiro?</h2>
+      <div class="section-divider"></div>
+      <div class="sobre-grid">
+        <div class="sobre-item">
+          <div class="icon">🔥</div>
+          <h3>Fogo de Carvão</h3>
+          <p>Costelas assadas lentamente no bafo, com carvão artesanal para um sabor único e inigualável.</p>
+        </div>
+        <div class="sobre-item">
+          <div class="icon">⏱️</div>
+          <h3>12 Horas de Preparo</h3>
+          <p>Cada peça é preparada com dedicação por até 12 horas para garantir a maciez perfeita.</p>
+        </div>
+        <div class="sobre-item">
+          <div class="icon">🌿</div>
+          <h3>Tempero Artesanal</h3>
+          <p>Receita exclusiva com ervas e especiarias selecionadas, sem conservantes ou artificiais.</p>
+        </div>
+        <div class="sobre-item">
+          <div class="icon">📦</div>
+          <h3>Encomenda Garantida</h3>
+          <p>Produção sob encomenda para garantir frescor e qualidade em cada pedido.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────────── -->
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-logo">Braseiro Costelaria</div>
+    <div class="footer-sub">Costela assada no bafo — Artesanal desde o primeiro dia.</div>
+    <div class="footer-copy">© <span id="ano"></span> Braseiro Costelaria. Todos os direitos reservados.</div>
+  </div>
+</footer>
+
+<!-- ── Carrinho FAB ────────────────────────────────────────── -->
+<button id="cart-fab" aria-label="Abrir carrinho de pedidos">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+  </svg>
+  <span id="cart-badge" aria-live="polite" aria-label="Itens no carrinho">0</span>
+</button>
+
+<!-- ── Painel Carrinho ─────────────────────────────────────── -->
+<div id="cart-panel" role="dialog" aria-modal="true" aria-label="Carrinho de pedidos">
+  <div class="cart-backdrop"></div>
+  <div class="cart-drawer">
+    <div class="cart-header">
+      <h2>🛒 Meu Pedido</h2>
+      <button class="btn-cart-close" id="btn-cart-close" aria-label="Fechar carrinho">✕</button>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <div class="cart-empty">🛒 Seu carrinho está vazio.</div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span class="cart-total-label">Total</span>
+        <span class="cart-total-value" id="cart-total">R$ 0,00</span>
+      </div>
+      <button class="btn-limpar" id="btn-limpar">Limpar carrinho</button>
+      <button class="btn-finalizar" id="btn-finalizar" disabled>Finalizar Pedido →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Imagem ────────────────────────────────────────── -->
+<div id="modal-img" role="dialog" aria-modal="true" aria-label="Visualizar produto">
+  <div id="modal-img-content">
+    <button class="btn-modal-close" id="btn-modal-img-close" aria-label="Fechar">✕</button>
+    <img id="modal-img-img" src="" alt="">
+    <div class="modal-img-footer">
+      <div>
+        <div class="modal-img-nome" id="modal-img-nome"></div>
+        <div class="modal-img-preco" id="modal-img-preco"></div>
+      </div>
+      <button class="btn-modal-add" id="btn-modal-add">+ Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Pedido ────────────────────────────────────────── -->
+<div id="modal-pedido" role="dialog" aria-modal="true" aria-label="Finalizar pedido">
+  <div class="pedido-box">
+    <div class="pedido-header">
+      <h2>🔥 Finalizar Pedido</h2>
+      <button class="btn-pedido-close" id="btn-pedido-close" aria-label="Fechar">✕</button>
+    </div>
+    <div class="pedido-body">
+
+      <!-- Step 1: Tipo de entrega -->
+      <div class="step active" id="step-1">
+        <div class="step-title">Como deseja receber?</div>
+        <div class="entrega-opcoes">
+          <div class="entrega-opcao" data-tipo="delivery" role="button" tabindex="0" aria-label="Delivery">
+            <div class="icon">🚚</div>
+            <div class="label">Delivery</div>
+          </div>
+          <div class="entrega-opcao" data-tipo="retirada" role="button" tabindex="0" aria-label="Retirada no estabelecimento">
+            <div class="icon">🏠</div>
+            <div class="label">Retirada</div>
+          </div>
+        </div>
+        <div class="step-actions">
+          <button class="btn-step-next" id="btn-step1-next">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Dados do cliente + Pagamento -->
+      <div class="step" id="step-2">
+        <div class="step-title">Seus dados e Pagamento</div>
+
+        <!-- Delivery Fields -->
+        <div id="delivery-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nome-delivery">Nome *</label>
+              <input type="text" id="nome-delivery" placeholder="Seu nome completo" autocomplete="name">
+            </div>
+            <div class="form-group">
+              <label for="tel-delivery">Telefone *</label>
+              <input type="tel" id="tel-delivery" placeholder="(00) 00000-0000" autocomplete="tel">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="endereco">Endereço *</label>
+              <input type="text" id="endereco" placeholder="Rua / Avenida" autocomplete="street-address">
+            </div>
+            <div class="form-group">
+              <label for="numero">Número *</label>
+              <input type="text" id="numero" placeholder="Nº">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bairro">Bairro *</label>
+              <input type="text" id="bairro" placeholder="Bairro">
+            </div>
+            <div class="form-group">
+              <label for="complemento">Complemento</label>
+              <input type="text" id="complemento" placeholder="Apto, bloco...">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cidade">Cidade *</label>
+            <input type="text" id="cidade" placeholder="Cidade" autocomplete="address-level2">
+          </div>
+          
+          <!-- Aviso da Taxa de Entrega Fixa -->
+          <div class="form-group" style="background: rgba(229, 169, 59, 0.1); border: 1px solid rgba(229, 169, 59, 0.3); padding: 10px; border-radius: 6px; margin-bottom: 12px;">
+            <span style="color: #e5a93b; font-size: 0.9rem; font-weight: 600;">🚚 Taxa de entrega fixa: R$ 5,00 (Toda a cidade)</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="data-delivery">Data *</label>
+              <input type="date" id="data-delivery">
+            </div>
+            <div class="form-group">
+              <label for="hora-delivery">Horário *</label>
+              <input type="time" id="hora-delivery">
+            </div>
+          </div>
+
+          <!-- Forma de Pagamento (Delivery) -->
+          <div class="form-group">
+            <label for="pagamento-delivery">Forma de Pagamento *</label>
+            <select id="pagamento-delivery">
+              <option value="">Selecione...</option>
+              <option value="PIX">PIX</option>
+              <option value="Cartão de Débito">Cartão de Débito (na entrega)</option>
+              <option value="Cartão de Crédito">Cartão de Crédito (na entrega)</option>
+              <option value="Dinheiro">Dinheiro</option>
+            </select>
+          </div>
+          <div class="form-group" id="troco-group-delivery" style="display:none;">
+            <label for="troco-delivery">Troco para quanto?</label>
+            <input type="text" id="troco-delivery" placeholder="Ex: R$ 50,00 ou Não preciso">
+          </div>
+
+          <div class="form-group">
+            <label for="obs-delivery">Observações</label>
+            <textarea id="obs-delivery" placeholder="Ex: Sem cebola, portão azul..."></textarea>
+          </div>
+        </div>
+
+        <!-- Retirada Fields -->
+        <div id="retirada-fields" style="display:none">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nome-retirada">Nome *</label>
+              <input type="text" id="nome-retirada" placeholder="Seu nome completo" autocomplete="name">
+            </div>
+            <div class="form-group">
+              <label for="tel-retirada">Telefone *</label>
+              <input type="tel" id="tel-retirada" placeholder="(00) 00000-0000" autocomplete="tel">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="data-retirada">Data *</label>
+              <input type="date" id="data-retirada">
+            </div>
+            <div class="form-group">
+              <label for="hora-retirada">Horário *</label>
+              <input type="time" id="hora-retirada">
+            </div>
+          </div>
+
+          <!-- Forma de Pagamento (Retirada) -->
+          <div class="form-group">
+            <label for="pagamento-retirada">Forma de Pagamento *</label>
+            <select id="pagamento-retirada">
+              <option value="">Selecione...</option>
+              <option value="PIX">PIX</option>
+              <option value="Cartão de Débito">Cartão de Débito (no local)</option>
+              <option value="Cartão de Crédito">Cartão de Crédito (no local)</option>
+              <option value="Dinheiro">Dinheiro</option>
+            </select>
+          </div>
+          <div class="form-group" id="troco-group-retirada" style="display:none;">
+            <label for="troco-retirada">Troco para quanto?</label>
+            <input type="text" id="troco-retirada" placeholder="Ex: R$ 50,00 ou Não preciso">
+          </div>
+
+          <div class="form-group">
+            <label for="obs-retirada">Observações</label>
+            <textarea id="obs-retirada" placeholder="Ex: Sem cebola, preferências..."></textarea>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn-step-back" id="btn-step2-back">← Voltar</button>
+          <button class="btn-step-next" id="btn-step2-next">Revisar Pedido →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Resumo e confirmação -->
+      <div class="step" id="step-3">
+        <div class="step-title">Resumo do Pedido</div>
+        <div class="resumo-itens" id="resumo-itens"></div>
+        
+        <!-- Detalhamento de Subtotal + Taxa + Total Final -->
+        <div class="resumo-detalhes" style="margin: 15px 0; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.95rem;">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+            <span style="color: #bbb;">Produtos:</span>
+            <span id="resumo-subtotal-val">R$ 0,00</span>
+          </div>
+          <div id="linha-taxa-resumo" style="display:flex; justify-between; margin-bottom: 6px; color: #e5a93b;">
+            <span>Entrega:</span>
+            <span id="resumo-taxa-val">R$ 5,00</span>
+          </div>
+        </div>
+
+        <div class="resumo-total">
+          <span>Total</span>
+          <span id="resumo-total-val">R$ 0,00</span>
+        </div>
+        <div class="step-actions">
+          <button class="btn-step-back" id="btn-step3-back">← Voltar</button>
+        </div>
+        <button class="btn-whatsapp" id="btn-whatsapp">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Enviar Pedido pelo WhatsApp
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── Painel Admin ────────────────────────────────────────── -->
+<div id="admin-page" role="main" aria-label="Painel Administrativo">
+  <div id="admin-navbar" style="position:relative;height:auto;padding:0" aria-hidden="true"></div>
+  <div class="admin-header">
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <h1>⚙️ Painel Administrativo</h1>
+          <p>Braseiro Costelaria — Gerenciamento do cardápio</p>
+        </div>
+        <button class="btn-admin-danger" id="btn-admin-close">✕ Fechar Admin</button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="admin-tabs" role="tablist">
+      <button class="admin-tab active" data-tab="produtos" role="tab" aria-selected="true">🥩 Produtos</button>
+      <button class="admin-tab" data-tab="config" role="tab" aria-selected="false">⚙️ Configurações</button>
+    </div>
+
+    <!-- Painel Produtos -->
+    <div class="admin-panel active" id="admin-panel-produtos" role="tabpanel">
+      <div class="admin-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h3>Produtos Cadastrados</h3>
+          <button class="btn-admin-save" id="btn-novo-produto">+ Novo Produto</button>
+        </div>
+        <div id="admin-produtos-lista">
+          <!-- Renderizado via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Painel Configurações -->
+    <div class="admin-panel" id="admin-panel-config" role="tabpanel">
+      <div class="admin-card">
+        <h3>📱 WhatsApp</h3>
+        <div class="form-group">
+          <label for="cfg-whatsapp">Número do WhatsApp (com DDI, ex: 5511999999999)</label>
+          <input type="text" id="cfg-whatsapp" placeholder="5511999999999">
+        </div>
+      </div>
+      <div class="admin-card">
+        <h3>🏠 Página Inicial</h3>
+        <div class="form-group">
+          <label for="cfg-hero-title">Título principal</label>
+          <input type="text" id="cfg-hero-title" placeholder="Braseiro Costelaria">
+        </div>
+        <div class="form-group">
+          <label for="cfg-hero-subtitle">Subtítulo</label>
+          <input type="text" id="cfg-hero-subtitle" placeholder="Costela assada no bafo.">
+        </div>
+        <div class="form-group">
+          <label for="cfg-badge1">Badge 1</label>
+          <input type="text" id="cfg-badge1" placeholder="🥩 Costelas artesanais.">
+        </div>
+        <div class="form-group">
+          <label for="cfg-badge2">Badge 2</label>
+          <input type="text" id="cfg-badge2" placeholder="📅 Encomendas para sexta, sábado, domingo e feriados.">
+        </div>
+        <div class="form-group">
+          <label for="cfg-badge3">Badge 3</label>
+          <input type="text" id="cfg-badge3" placeholder="⏳ Produção artesanal.">
+        </div>
+        <button class="btn-admin-save" id="btn-save-config">💾 Salvar Configurações</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Admin: Produto ────────────────────────────────── -->
+<div id="modal-admin-produto" role="dialog" aria-modal="true" aria-label="Editar produto">
+  <div class="admin-produto-box">
+    <div class="admin-produto-header">
+      <h3 id="admin-produto-modal-title">Novo Produto</h3>
+      <button class="btn-cart-close" id="btn-admin-produto-close" aria-label="Fechar">✕</button>
+    </div>
+    <div class="admin-produto-body">
+      <div class="form-group">
+        <label for="admin-produto-nome">Nome do produto *</label>
+        <input type="text" id="admin-produto-nome" placeholder="Ex: Costela Bovina Inteira">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="admin-produto-preco">Preço (R$) *</label>
+          <input type="number" id="admin-produto-preco" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="admin-produto-categoria">Categoria</label>
+          <select id="admin-produto-categoria">
+            <option value="costelas">🥩 Carnes no Bafo</option>
+            <option value="acompanhamentos">🍚 Acompanhamentos</option>
+            <option value="bebidas">🥤 Bebidas</option>
+            <option value="combos">🔥 Combos</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="admin-produto-desc">Descrição (opcional)</label>
+        <textarea id="admin-produto-desc" placeholder="Descrição breve do produto..."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="admin-produto-img-url">URL da imagem</label>
+        <input type="text" id="admin-produto-img-url" placeholder="https://... ou caminho local">
+      </div>
+      <div class="form-group">
+        <label for="admin-produto-img-file">Ou fazer upload da imagem</label>
+        <input type="file" id="admin-produto-img-file" accept="image/*" style="color:var(--branco-soft)">
+        <div id="admin-produto-img-preview"></div>
+      </div>
+      <div class="form-group">
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox" id="admin-produto-ativo" checked>
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="toggle-label">Produto ativo (visível no cardápio)</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="btn-admin-secondary" id="btn-admin-produto-cancel">Cancelar</button>
+        <button class="btn-admin-save" id="btn-admin-produto-save">💾 Salvar Produto</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Login Admin ─────────────────────────────────────────── -->
+<div id="admin-login" role="dialog" aria-modal="true" aria-label="Login administrativo">
+  <div class="login-box">
+    <h2>🔐 Área Restrita</h2>
+    <p>Digite a senha para acessar o painel administrativo.</p>
+    <div class="form-group">
+      <input type="password" id="admin-login-input" placeholder="Senha" autocomplete="current-password">
+    </div>
+    <div class="login-error" id="admin-login-error"></div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn-admin-secondary" id="btn-admin-login-cancel" style="flex:1">Cancelar</button>
+      <button class="btn-admin-save" id="btn-admin-login-confirm" style="flex:2">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast Container ─────────────────────────────────────── -->
+<div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+<!-- ── SDKs do Firebase (Versão Compat) ────────────────────── -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<!-- ── Inicialização e Conexão Firebase ────────────────────── -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBbwCgpP1EP142eSBD12MqKI3LawAS9v3o",
+    authDomain: "braseiro-costelaria.firebaseapp.com",
+    databaseURL: "https://braseiro-costelaria-default-rtdb.firebaseio.com",
+    projectId: "braseiro-costelaria",
+    storageBucket: "braseiro-costelaria.firebasestorage.app",
+    messagingSenderId: "183854353055",
+    appId: "1:183854353055:web:75201628972a4e6cf070aa",
+    measurementId: "G-9TJ5YV71YW"
+  };
+
+  // Inicializa o Firebase
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  // Cria a variável global 'database' consumida por app.js e admin.js
+  window.database = firebase.database();
+</script>
+
+<!-- ── Scripts da Aplicação ────────────────────────────────── -->
+<script src="js/app.js?v=2"></script>
+<script src="js/admin.js?v=2"></script>
+</body>
+</html>
