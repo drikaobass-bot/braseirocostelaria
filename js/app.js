@@ -5,6 +5,44 @@
 
 'use strict';
 
+// ============================================================
+// SEGURANÇA: Criptografia para LocalStorage
+// ============================================================
+
+// Função para criptografar dados antes de salvar no LocalStorage
+function encryptData(data, key = 'braseiro_secure_2024') {
+  try {
+    const jsonStr = JSON.stringify(data);
+    let result = '';
+    for (let i = 0; i < jsonStr.length; i++) {
+      result += String.fromCharCode(
+        jsonStr.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+      );
+    }
+    return btoa(result);
+  } catch (e) {
+    console.error('Erro ao criptografar:', e);
+    return JSON.stringify(data);
+  }
+}
+
+// Função para descriptografar dados do LocalStorage
+function decryptData(encryptedData, key = 'braseiro_secure_2024') {
+  try {
+    const decoded = atob(encryptedData);
+    let result = '';
+    for (let i = 0; i < decoded.length; i++) {
+      result += String.fromCharCode(
+        decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length)
+      );
+    }
+    return JSON.parse(result);
+  } catch (e) {
+    console.error('Erro ao descriptografar:', e);
+    return null;
+  }
+}
+
 /* ── Regras de Negócio e Taxas ─────────────────────────────── */
 const TAXA_DELIVERY = 5.00;
 const PEDIDO_MINIMO_DELIVERY = 50.00;
@@ -98,14 +136,21 @@ function formatarDataBR(dataIso) {
 
 function saveLS(key, val) { 
   try {
-    localStorage.setItem('braseiro_' + key, JSON.stringify(val)); 
+    const encrypted = encryptData(val);
+    localStorage.setItem('braseiro_' + key, encrypted);
   } catch(e) {
     console.warn('Erro ao salvar no LocalStorage:', e);
   }
 }
 function loadLS(key, def) {
-  try { const v = localStorage.getItem('braseiro_' + key); return v ? JSON.parse(v) : def; }
-  catch { return def; }
+  try { 
+    const v = localStorage.getItem('braseiro_' + key); 
+    if (!v) return def;
+    const decrypted = decryptData(v);
+    return decrypted !== null ? decrypted : def;
+  } catch { 
+    return def; 
+  }
 }
 
 /* ── Toast ─────────────────────────────────────────────────── */
@@ -317,6 +362,13 @@ function bindModalImg() {
 function addToCart(id) {
   const p = STATE.produtos.find(x => x.id === id);
   if (!p) return;
+  
+  // Validação de segurança: garantir que o preço é um número
+  if (typeof p.preco !== 'number' || p.preco < 0 || p.preco > 99999) {
+    showToast('⚠️ Produto inválido.');
+    return;
+  }
+  
   const existing = STATE.cart.find(x => x.id === id);
   if (existing) { 
     existing.qty++; 
@@ -347,7 +399,15 @@ function clearCart() {
   renderCartItems();
 }
 
-function cartTotal() { return STATE.cart.reduce((s, i) => s + i.preco * i.qty, 0); }
+function cartTotal() { 
+  return STATE.cart.reduce((s, i) => {
+    // Validação extra: garantir que preço e quantidade são números
+    const preco = typeof i.preco === 'number' ? i.preco : 0;
+    const qty = typeof i.qty === 'number' ? i.qty : 0;
+    return s + preco * qty;
+  }, 0); 
+}
+
 function cartCount() { return STATE.cart.reduce((s, i) => s + i.qty, 0); }
 
 function updateCartUI() {
