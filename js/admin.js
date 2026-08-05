@@ -1,5 +1,5 @@
 /* ============================================================
-   BRASEIRO COSTELARIA — admin.js
+   BRASEIRO COSTELARIA — admin.js (Versão Corrigida)
    Painel Administrativo com Firebase + LocalStorage + Compressão
    ============================================================ */
 
