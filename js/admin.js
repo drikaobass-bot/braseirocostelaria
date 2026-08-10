@@ -7,6 +7,7 @@
 
 let adminLogado = false;
 
+/* ── Criptografia ──────────────────────────────────────────── */
 function encryptData(data, key = 'braseiro_secure_2024') {
   try {
     const jsonStr = JSON.stringify(data);
@@ -39,6 +40,7 @@ function decryptData(encryptedData, key = 'braseiro_secure_2024') {
   }
 }
 
+/* ── Utilitários ───────────────────────────────────────────── */
 function saveLS(key, val) {
   try {
     const encrypted = encryptData(val);
@@ -78,6 +80,7 @@ function uid() {
   return 'p' + Date.now() + Math.random().toString(36).slice(2, 6); 
 }
 
+/* ── Integração Firebase Helper Functions ─────────────────── */
 function syncProdutosToFirebase(produtos) {
   if (typeof database !== 'undefined') {
     database.ref('produtos').set(produtos)
@@ -92,6 +95,7 @@ function syncConfigToFirebase(config) {
   }
 }
 
+/* ── Compressão de Imagem ──────────────────────────────────── */
 function compressImage(file, maxDim = 400, quality = 0.7) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -114,6 +118,7 @@ function compressImage(file, maxDim = 400, quality = 0.7) {
   });
 }
 
+/* ── Login com Firebase Auth ────────────────────────────────── */
 function openAdminLogin() {
   document.getElementById('admin-login').classList.add('open');
   document.getElementById('admin-login-input').value = '';
@@ -140,19 +145,28 @@ function bindAdminLogin() {
         return;
       }
 
-      // 🔥 SENHA FIXA - SEM FIREBASE AUTH
-      const SENHA_CORRETA = 'braseiro2024';
+      error.textContent = 'Autenticando...';
 
-      if (senha === SENHA_CORRETA) {
-        adminLogado = true;
-        closeAdminLogin();
-        openAdmin();
-        error.textContent = '';
-      } else {
-        error.textContent = 'Senha incorreta. Tente novamente.';
-        input.value = '';
-        input.focus();
-      }
+      // ✅ RESTAURAÇÃO DO FIREBASE AUTHENTICATION
+      firebase.auth().signInWithEmailAndPassword('drikao.bass@gmail.com', senha)
+        .then(() => {
+          adminLogado = true;
+          closeAdminLogin();
+          openAdmin();
+          error.textContent = '';
+        })
+        .catch(err => {
+          console.error('Erro na autenticação Firebase:', err);
+          if (err.code === 'auth/wrong-password') {
+            error.textContent = 'Senha incorreta. Tente novamente.';
+          } else if (err.code === 'auth/user-not-found') {
+            error.textContent = 'Usuário não encontrado. Verifique o e-mail.';
+          } else {
+            error.textContent = 'Erro ao fazer login: ' + err.message;
+          }
+          input.value = '';
+          input.focus();
+        });
     });
   }
 
@@ -167,6 +181,7 @@ function bindAdminLogin() {
   }
 }
 
+/* ── Abrir / Fechar Admin ──────────────────────────────────── */
 function openAdmin() {
   document.getElementById('main-content').style.display = 'none';
   document.getElementById('admin-page').classList.add('open');
@@ -219,6 +234,7 @@ function closeAdmin() {
   }
 }
 
+/* ── Tabs ──────────────────────────────────────────────────── */
 function bindAdmin() {
   const btnClose = document.getElementById('btn-admin-close');
   if (btnClose) btnClose.addEventListener('click', closeAdmin);
@@ -254,6 +270,7 @@ function bindAdmin() {
   }
 }
 
+/* ── Configurações ─────────────────────────────────────────── */
 function preencherConfigForm() {
   const c = loadLS('config', {});
   const def = {
@@ -289,6 +306,7 @@ function salvarConfig() {
   showToast('✅ Configurações salvas e sincronizadas!');
 }
 
+/* ── Produtos Admin ────────────────────────────────────────── */
 function renderAdminProdutos() {
   const lista = loadLS('produtos', []);
   const container = document.getElementById('admin-produtos-lista');
@@ -380,6 +398,7 @@ function excluirProduto(id) {
   showToast('🗑️ Produto excluído.');
 }
 
+/* ── Modal Produto ─────────────────────────────────────────── */
 let editandoProdutoId = null;
 let imagemComprimida = null;
 
@@ -507,26 +526,35 @@ function salvarProduto() {
   renderAdminProdutos();
 }
 
+/* ── Lógica de Ordenação CORRIGIDA ─────────────────────────── */
 function alterarOrdem(id, categoria, direcao) {
   let lista = loadLS('produtos', []);
   
+  // Filtra apenas os itens da categoria selecionada e ordena por ordem atual
   let itensCategoria = lista.filter(p => p.categoria === categoria).sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
   
+  // Encontra o índice do item a ser movido
   const indexAtual = itensCategoria.findIndex(p => p.id === id);
   if (indexAtual === -1) return;
 
+  // Calcula o novo índice com base na direção
   const novoIndex = indexAtual + direcao;
+  
+  // Verifica se o movimento é válido (não ultrapassa os limites da lista)
   if (novoIndex < 0 || novoIndex >= itensCategoria.length) {
     showToast('⚠️ Já está no limite da lista.');
     return;
   }
 
+  // Troca as posições no array da categoria
   [itensCategoria[indexAtual], itensCategoria[novoIndex]] = [itensCategoria[novoIndex], itensCategoria[indexAtual]];
 
+  // Recalcula a ordem sequencial para a categoria inteira (10, 20, 30...)
   itensCategoria.forEach((p, i) => {
     p.ordem = (i + 1) * 10;
   });
 
+  // Atualiza a lista principal com os novos valores de ordem
   itensCategoria.forEach(p => {
     const idxMain = lista.findIndex(x => x.id === p.id);
     if (idxMain !== -1) {
@@ -534,10 +562,12 @@ function alterarOrdem(id, categoria, direcao) {
     }
   });
 
+  // Persiste as alterações
   saveLS('produtos', lista);
   syncProdutosToFirebase(lista);
   renderAdminProdutos();
   
+  // Atualiza o cardápio em tempo real, se a função existir
   if (typeof STATE !== 'undefined' && typeof renderProdutos === 'function') {
     STATE.produtos = lista;
     const activeFilterBtn = $('.filter-btn.active');
@@ -548,6 +578,7 @@ function alterarOrdem(id, categoria, direcao) {
   showToast('✅ Ordem atualizada!');
 }
 
+/* ── Expor funções globais ─────────────────────────────────── */
 window.openAdminLogin     = openAdminLogin;
 window.closeAdminLogin    = closeAdminLogin;
 window.bindAdminLogin     = bindAdminLogin;
