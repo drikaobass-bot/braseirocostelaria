@@ -9,12 +9,10 @@
   <meta name="robots" content="index, follow">
   <meta name="author" content="Braseiro Costelaria">
 
-  <!-- Meta Tags Anti-Cache -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <!-- Open Graph / WhatsApp -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Braseiro Costelaria — Cardápio Digital">
   <meta property="og:description" content="Costela assada no bafo. Encomendas para sexta, sábado, domingo e feriados.">
@@ -22,13 +20,11 @@
   <meta property="og:url" content="">
   <meta property="og:locale" content="pt_BR">
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Braseiro Costelaria — Cardápio Digital">
   <meta name="twitter:description" content="Costela assada no bafo. Encomendas para sexta, sábado, domingo e feriados.">
   <meta name="twitter:image" content="assets/logo/og-image.jpg">
 
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,21 +32,19 @@
   <meta name="apple-mobile-web-app-title" content="Braseiro">
   <meta name="mobile-web-app-capable" content="yes">
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
   <link rel="shortcut icon" href="assets/icons/favicon.ico">
 
   <title>Braseiro Costelaria — Cardápio Digital</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=3"> <!-- ✅ FORÇA ATUALIZAÇÃO DO CSS -->
 </head>
 <body>
 
-<!-- ── Navbar ──────────────────────────────────────────────── -->
 <nav id="navbar" role="navigation" aria-label="Navegação principal">
   <div class="container nav-inner">
     <a href="#" class="nav-logo" aria-label="Braseiro Costelaria - Início">
-      <img src="assets/logo/logo.png" alt="Logo Braseiro Costelaria" onerror="this.style.display='none'">
+      <img src="assets/logo/logo.png?v=3" alt="Logo Braseiro Costelaria" onerror="this.style.display='none'"> <!-- ✅ FORÇA ATUALIZAÇÃO DA LOGO -->
       <div class="nav-logo-text">
         Braseiro
         <span>Costelaria</span>
@@ -64,16 +58,14 @@
   </div>
 </nav>
 
-<!-- ── Conteúdo Principal ──────────────────────────────────── -->
 <main id="main-content">
 
-  <!-- ── Hero ──────────────────────────────────────────────── -->
   <section id="hero" aria-label="Apresentação">
     <div class="hero-bg"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <img
-        src="assets/logo/logo.png"
+        src="assets/logo/logo.png?v=3"
         alt="Braseiro Costelaria"
         class="hero-logo-img"
         onerror="this.style.display='none'"
@@ -89,13 +81,11 @@
     </div>
   </section>
 
-  <!-- ── Cardápio ───────────────────────────────────────────── -->
   <section id="cardapio" class="section" aria-label="Cardápio">
     <div class="container">
       <h2 class="section-title">Nosso Cardápio</h2>
       <div class="section-divider"></div>
 
-      <!-- Filtros -->
       <div class="filter-bar" role="group" aria-label="Filtrar por categoria">
         <button class="filter-btn active" data-filter="todos">Todos</button>
         <button class="filter-btn" data-filter="costelas">🥩 Carnes no Bafo</button>
@@ -104,14 +94,11 @@
         <button class="filter-btn" data-filter="combos">🔥 Combos</button>
       </div>
 
-      <!-- Grid de produtos -->
       <div class="produtos-grid" id="produtos-grid" role="list" aria-label="Produtos disponíveis">
-        <!-- Renderizado via JS -->
       </div>
     </div>
   </section>
 
-  <!-- ── Sobre ──────────────────────────────────────────────── -->
   <section id="sobre" class="section" aria-label="Sobre a Braseiro Costelaria">
     <div class="container">
       <h2 class="section-title">Por que escolher a Braseiro?</h2>
@@ -120,7 +107,7 @@
         <div class="sobre-item">
           <div class="icon">🔥</div>
           <h3>Fogo de Carvão</h3>
-          <p>Costelas assadas lentamente no bafo, com carvão artesanal para um sabor único e inigualável.</p>
+          <p>Costelas assadas lentamente no bafo, com carvão artesanal para um sabor único.</p>
         </div>
         <div class="sobre-item">
           <div class="icon">⏱️</div>
@@ -130,7 +117,7 @@
         <div class="sobre-item">
           <div class="icon">🌿</div>
           <h3>Tempero Artesanal</h3>
-          <p>Receita exclusiva com ervas e especiarias selecionadas, sem conservantes ou artificiais.</p>
+          <p>Receita exclusiva com ervas e especiarias selecionadas, sem conservantes.</p>
         </div>
         <div class="sobre-item">
           <div class="icon">📦</div>
@@ -143,7 +130,6 @@
 
 </main>
 
-<!-- ── Footer ─────────────────────────────────────────────── -->
 <footer role="contentinfo">
   <div class="container">
     <div class="footer-logo">Braseiro Costelaria</div>
@@ -152,7 +138,6 @@
   </div>
 </footer>
 
-<!-- ── Carrinho FAB ────────────────────────────────────────── -->
 <button id="cart-fab" aria-label="Abrir carrinho de pedidos">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
@@ -161,7 +146,6 @@
   <span id="cart-badge" aria-live="polite" aria-label="Itens no carrinho">0</span>
 </button>
 
-<!-- ── Painel Carrinho ─────────────────────────────────────── -->
 <div id="cart-panel" role="dialog" aria-modal="true" aria-label="Carrinho de pedidos">
   <div class="cart-backdrop"></div>
   <div class="cart-drawer">
@@ -183,7 +167,6 @@
   </div>
 </div>
 
-<!-- ── Modal Imagem ────────────────────────────────────────── -->
 <div id="modal-img" role="dialog" aria-modal="true" aria-label="Visualizar produto">
   <div id="modal-img-content">
     <button class="btn-modal-close" id="btn-modal-img-close" aria-label="Fechar">✕</button>
@@ -198,7 +181,6 @@
   </div>
 </div>
 
-<!-- ── Modal Pedido ────────────────────────────────────────── -->
 <div id="modal-pedido" role="dialog" aria-modal="true" aria-label="Finalizar pedido">
   <div class="pedido-box">
     <div class="pedido-header">
@@ -206,8 +188,6 @@
       <button class="btn-pedido-close" id="btn-pedido-close" aria-label="Fechar">✕</button>
     </div>
     <div class="pedido-body">
-
-      <!-- Step 1: Tipo de entrega -->
       <div class="step active" id="step-1">
         <div class="step-title">Como deseja receber?</div>
         <div class="entrega-opcoes">
@@ -215,7 +195,7 @@
             <div class="icon">🚚</div>
             <div class="label">Delivery</div>
           </div>
-          <div class="entrega-opcao" data-tipo="retirada" role="button" tabindex="0" aria-label="Retirada no estabelecimento">
+          <div class="entrega-opcao" data-tipo="retirada" role="button" tabindex="0" aria-label="Retirada">
             <div class="icon">🏠</div>
             <div class="label">Retirada</div>
           </div>
@@ -225,11 +205,8 @@
         </div>
       </div>
 
-      <!-- Step 2: Dados do cliente + Pagamento -->
       <div class="step" id="step-2">
         <div class="step-title">Seus dados e Pagamento</div>
-
-        <!-- Delivery Fields -->
         <div id="delivery-fields">
           <div class="form-row">
             <div class="form-group">
@@ -266,7 +243,6 @@
             <input type="text" id="cidade" placeholder="Cidade" autocomplete="address-level2">
           </div>
           
-          <!-- Aviso da Taxa de Entrega Fixa -->
           <div class="form-group" style="background: rgba(229, 169, 59, 0.1); border: 1px solid rgba(229, 169, 59, 0.3); padding: 10px; border-radius: 6px; margin-bottom: 12px;">
             <span style="color: #e5a93b; font-size: 0.9rem; font-weight: 600;">🚚 Taxa de entrega fixa: R$ 5,00 (Toda a cidade)</span>
           </div>
@@ -282,7 +258,6 @@
             </div>
           </div>
 
-          <!-- Forma de Pagamento (Delivery) -->
           <div class="form-group">
             <label for="pagamento-delivery">Forma de Pagamento *</label>
             <select id="pagamento-delivery">
@@ -304,7 +279,6 @@
           </div>
         </div>
 
-        <!-- Retirada Fields -->
         <div id="retirada-fields" style="display:none">
           <div class="form-row">
             <div class="form-group">
@@ -327,7 +301,6 @@
             </div>
           </div>
 
-          <!-- Forma de Pagamento (Retirada) -->
           <div class="form-group">
             <label for="pagamento-retirada">Forma de Pagamento *</label>
             <select id="pagamento-retirada">
@@ -355,12 +328,10 @@
         </div>
       </div>
 
-      <!-- Step 3: Resumo e confirmação -->
       <div class="step" id="step-3">
         <div class="step-title">Resumo do Pedido</div>
         <div class="resumo-itens" id="resumo-itens"></div>
         
-        <!-- Detalhamento de Subtotal + Taxa + Total Final -->
         <div class="resumo-detalhes" style="margin: 15px 0; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.95rem;">
           <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
             <span style="color: #bbb;">Produtos:</span>
@@ -384,12 +355,10 @@
           Enviar Pedido pelo WhatsApp
         </button>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- ── Painel Admin ────────────────────────────────────────── -->
 <div id="admin-page" role="main" aria-label="Painel Administrativo">
   <div id="admin-navbar" style="position:relative;height:auto;padding:0" aria-hidden="true"></div>
   <div class="admin-header">
@@ -409,7 +378,6 @@
       <button class="admin-tab" data-tab="config" role="tab" aria-selected="false">⚙️ Configurações</button>
     </div>
 
-    <!-- Painel Produtos -->
     <div class="admin-panel active" id="admin-panel-produtos" role="tabpanel">
       <div class="admin-card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
@@ -417,12 +385,10 @@
           <button class="btn-admin-save" id="btn-novo-produto">+ Novo Produto</button>
         </div>
         <div id="admin-produtos-lista">
-          <!-- Renderizado via JS -->
         </div>
       </div>
     </div>
 
-    <!-- Painel Configurações -->
     <div class="admin-panel" id="admin-panel-config" role="tabpanel">
       <div class="admin-card">
         <h3>📱 WhatsApp</h3>
@@ -459,7 +425,6 @@
   </div>
 </div>
 
-<!-- ── Modal Admin: Produto ────────────────────────────────── -->
 <div id="modal-admin-produto" role="dialog" aria-modal="true" aria-label="Editar produto">
   <div class="admin-produto-box">
     <div class="admin-produto-header">
@@ -516,7 +481,6 @@
   </div>
 </div>
 
-<!-- ── Login Admin ─────────────────────────────────────────── -->
 <div id="admin-login" role="dialog" aria-modal="true" aria-label="Login administrativo">
   <div class="login-box">
     <h2>🔐 Área Restrita</h2>
@@ -532,15 +496,12 @@
   </div>
 </div>
 
-<!-- ── Toast Container ─────────────────────────────────────── -->
 <div id="toast-container" aria-live="polite" aria-atomic="false"></div>
 
-<!-- ── SDKs do Firebase (Versão Compat) ────────────────────── -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
-<!-- ── Inicialização e Conexão Firebase ────────────────────── -->
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyBbwCgpP1EP142eSBD12MqKI3LawAS9v3o",
@@ -560,8 +521,7 @@
   window.database = firebase.database();
 </script>
 
-<!-- ── Scripts da Aplicação ────────────────────────────────── -->
-<script src="js/app.js?v=2"></script>
-<script src="js/admin.js?v=2"></script>
+<script src="js/app.js?v=3"></script> <!-- ✅ FORÇA ATUALIZAÇÃO DO APP.JS -->
+<script src="js/admin.js?v=3"></script> <!-- ✅ FORÇA ATUALIZAÇÃO DO ADMIN.JS -->
 </body>
 </html>
