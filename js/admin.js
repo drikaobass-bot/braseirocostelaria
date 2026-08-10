@@ -150,7 +150,7 @@ function bindAdminLogin() {
 
       error.textContent = 'Autenticando...';
 
-      // ✅ FIREBASE AUTHENTICATION (RESTAURADO E SEGURO)
+      // 🔐 FIREBASE AUTHENTICATION - SOMENTE ISSO (SEM SENHA FIXA)
       firebase.auth().signInWithEmailAndPassword('drikao.bass@gmail.com', senha)
         .then(() => {
           adminLogado = true;
@@ -529,35 +529,38 @@ function salvarProduto() {
   renderAdminProdutos();
 }
 
-/* ── Lógica de Ordenação CORRIGIDA ─────────────────────────── */
+/* ── Lógica de Ordenação DEFINITIVA (com SPLICE) ──────────── */
 function alterarOrdem(id, categoria, direcao) {
   let lista = loadLS('produtos', []);
   
-  // Filtra apenas os itens da categoria selecionada e ordena por ordem atual
-  let itensCategoria = lista.filter(p => p.categoria === categoria).sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
-  
-  // Encontra o índice do item a ser movido
+  // 1. Filtra apenas os itens da categoria e ordena por ordem atual
+  let itensCategoria = lista
+    .filter(p => p.categoria === categoria)
+    .sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+
+  // 2. Encontra o índice do item a ser movido
   const indexAtual = itensCategoria.findIndex(p => p.id === id);
   if (indexAtual === -1) return;
 
-  // Calcula o novo índice com base na direção
+  // 3. Calcula o novo índice
   const novoIndex = indexAtual + direcao;
   
-  // Verifica se o movimento é válido (não ultrapassa os limites da lista)
+  // 4. Verifica se o movimento é válido (não ultrapassa os limites)
   if (novoIndex < 0 || novoIndex >= itensCategoria.length) {
     showToast('⚠️ Já está no limite da lista.');
     return;
   }
 
-  // Troca as posições no array da categoria
-  [itensCategoria[indexAtual], itensCategoria[novoIndex]] = [itensCategoria[novoIndex], itensCategoria[indexAtual]];
+  // 5. Remove o item da posição atual e insere na nova posição (uso seguro de SPLICE)
+  const [itemRemovido] = itensCategoria.splice(indexAtual, 1);
+  itensCategoria.splice(novoIndex, 0, itemRemovido);
 
-  // Recalcula a ordem sequencial para a categoria inteira (10, 20, 30...)
+  // 6. Recalcula a ordem sequencial (10, 20, 30...)
   itensCategoria.forEach((p, i) => {
     p.ordem = (i + 1) * 10;
   });
 
-  // Atualiza a lista principal com os novos valores de ordem
+  // 7. Atualiza a lista principal
   itensCategoria.forEach(p => {
     const idxMain = lista.findIndex(x => x.id === p.id);
     if (idxMain !== -1) {
@@ -565,15 +568,15 @@ function alterarOrdem(id, categoria, direcao) {
     }
   });
 
-  // Persiste as alterações
+  // 8. Persiste as alterações
   saveLS('produtos', lista);
   syncProdutosToFirebase(lista);
   renderAdminProdutos();
   
-  // Atualiza o cardápio em tempo real, se a função existir
+  // 9. Atualiza o cardápio em tempo real
   if (typeof STATE !== 'undefined' && typeof renderProdutos === 'function') {
     STATE.produtos = lista;
-    const activeFilterBtn = $('.filter-btn.active');
+    const activeFilterBtn = document.querySelector('.filter-btn.active');
     const filtroAtual = activeFilterBtn ? activeFilterBtn.dataset.filter : 'todos';
     renderProdutos(filtroAtual);
   }
