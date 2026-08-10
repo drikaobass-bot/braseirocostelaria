@@ -7,10 +7,6 @@
 
 let adminLogado = false;
 
-// ============================================================
-// SEGURANÇA: Criptografia para LocalStorage
-// ============================================================
-
 function encryptData(data, key = 'braseiro_secure_2024') {
   try {
     const jsonStr = JSON.stringify(data);
@@ -43,7 +39,6 @@ function decryptData(encryptedData, key = 'braseiro_secure_2024') {
   }
 }
 
-/* ── Utilitários ───────────────────────────────────────────── */
 function saveLS(key, val) {
   try {
     const encrypted = encryptData(val);
@@ -83,7 +78,6 @@ function uid() {
   return 'p' + Date.now() + Math.random().toString(36).slice(2, 6); 
 }
 
-/* ── Integração Firebase Helper Functions ─────────────────── */
 function syncProdutosToFirebase(produtos) {
   if (typeof database !== 'undefined') {
     database.ref('produtos').set(produtos)
@@ -98,7 +92,6 @@ function syncConfigToFirebase(config) {
   }
 }
 
-/* ── Compressão de Imagem ──────────────────────────────────── */
 function compressImage(file, maxDim = 400, quality = 0.7) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -121,7 +114,6 @@ function compressImage(file, maxDim = 400, quality = 0.7) {
   });
 }
 
-/* ── Login com Firebase Auth ────────────────────────────────── */
 function openAdminLogin() {
   document.getElementById('admin-login').classList.add('open');
   document.getElementById('admin-login-input').value = '';
@@ -148,34 +140,19 @@ function bindAdminLogin() {
         return;
       }
 
-      error.textContent = 'Autenticando...';
+      // 🔥 SENHA FIXA - SEM FIREBASE AUTH
+      const SENHA_CORRETA = 'braseiro2024';
 
-      // ✅ CORREÇÃO: Firebase Authentication com validação de e-mail
-      firebase.auth().signInWithEmailAndPassword('drikao.bass@gmail.com', senha)
-        .then((userCredential) => {
-          // Login bem-sucedido!
-          adminLogado = true;
-          closeAdminLogin();
-          openAdmin();
-          console.log('Login realizado com sucesso:', userCredential.user.email);
-        })
-        .catch(err => {
-          console.error('Erro na autenticação Firebase:', err);
-          
-          // Mensagens de erro mais amigáveis
-          if (err.code === 'auth/wrong-password') {
-            error.textContent = 'Senha incorreta. Verifique e tente novamente.';
-          } else if (err.code === 'auth/user-not-found') {
-            error.textContent = 'Usuário não encontrado. Verifique o e-mail.';
-          } else if (err.code === 'auth/too-many-requests') {
-            error.textContent = 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
-          } else {
-            error.textContent = 'Erro ao fazer login: ' + err.message;
-          }
-          
-          input.value = '';
-          input.focus();
-        });
+      if (senha === SENHA_CORRETA) {
+        adminLogado = true;
+        closeAdminLogin();
+        openAdmin();
+        error.textContent = '';
+      } else {
+        error.textContent = 'Senha incorreta. Tente novamente.';
+        input.value = '';
+        input.focus();
+      }
     });
   }
 
@@ -190,7 +167,6 @@ function bindAdminLogin() {
   }
 }
 
-/* ── Abrir / Fechar Admin ──────────────────────────────────── */
 function openAdmin() {
   document.getElementById('main-content').style.display = 'none';
   document.getElementById('admin-page').classList.add('open');
@@ -243,7 +219,6 @@ function closeAdmin() {
   }
 }
 
-/* ── Tabs ──────────────────────────────────────────────────── */
 function bindAdmin() {
   const btnClose = document.getElementById('btn-admin-close');
   if (btnClose) btnClose.addEventListener('click', closeAdmin);
@@ -279,7 +254,6 @@ function bindAdmin() {
   }
 }
 
-/* ── Configurações ─────────────────────────────────────────── */
 function preencherConfigForm() {
   const c = loadLS('config', {});
   const def = {
@@ -315,7 +289,6 @@ function salvarConfig() {
   showToast('✅ Configurações salvas e sincronizadas!');
 }
 
-/* ── Produtos Admin ────────────────────────────────────────── */
 function renderAdminProdutos() {
   const lista = loadLS('produtos', []);
   const container = document.getElementById('admin-produtos-lista');
@@ -407,7 +380,6 @@ function excluirProduto(id) {
   showToast('🗑️ Produto excluído.');
 }
 
-/* ── Modal Produto ─────────────────────────────────────────── */
 let editandoProdutoId = null;
 let imagemComprimida = null;
 
@@ -505,7 +477,6 @@ function salvarProduto() {
       : p);
     showToast('✅ Produto atualizado!');
   } else {
-    // NOVO PRODUTO: Calcula a ordem correta para o final da categoria
     const itensMesmaCategoria = lista.filter(p => p.categoria === categoria);
     
     let maiorOrdem = 0;
@@ -536,7 +507,6 @@ function salvarProduto() {
   renderAdminProdutos();
 }
 
-/* ── Lógica de Ordenação (Swap e Atualização) ─────────────── */
 function alterarOrdem(id, categoria, direcao) {
   let lista = loadLS('produtos', []);
   
@@ -578,7 +548,6 @@ function alterarOrdem(id, categoria, direcao) {
   showToast('✅ Ordem atualizada!');
 }
 
-/* ── Expor funções globais ─────────────────────────────────── */
 window.openAdminLogin     = openAdminLogin;
 window.closeAdminLogin    = closeAdminLogin;
 window.bindAdminLogin     = bindAdminLogin;
