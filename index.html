@@ -553,12 +553,10 @@
     measurementId: "G-9TJ5YV71YW"
   };
 
-  // Inicializa o Firebase
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
 
-  // Cria a variável global 'database' consumida por app.js e admin.js
   window.database = firebase.database();
 </script>
 
