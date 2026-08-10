@@ -7,7 +7,10 @@
 
 let adminLogado = false;
 
-/* ── Criptografia ──────────────────────────────────────────── */
+// ============================================================
+// SEGURANÇA: Criptografia para LocalStorage
+// ============================================================
+
 function encryptData(data, key = 'braseiro_secure_2024') {
   try {
     const jsonStr = JSON.stringify(data);
@@ -147,7 +150,7 @@ function bindAdminLogin() {
 
       error.textContent = 'Autenticando...';
 
-      // ✅ RESTAURAÇÃO DO FIREBASE AUTHENTICATION
+      // ✅ FIREBASE AUTHENTICATION (RESTAURADO E SEGURO)
       firebase.auth().signInWithEmailAndPassword('drikao.bass@gmail.com', senha)
         .then(() => {
           adminLogado = true;
