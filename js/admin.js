@@ -11,7 +11,6 @@ let adminLogado = false;
 // SEGURANÇA: Criptografia para LocalStorage
 // ============================================================
 
-// Função para criptografar dados antes de salvar no LocalStorage
 function encryptData(data, key = 'braseiro_secure_2024') {
   try {
     const jsonStr = JSON.stringify(data);
@@ -28,7 +27,6 @@ function encryptData(data, key = 'braseiro_secure_2024') {
   }
 }
 
-// Função para descriptografar dados do LocalStorage
 function decryptData(encryptedData, key = 'braseiro_secure_2024') {
   try {
     const decoded = atob(encryptedData);
@@ -152,7 +150,6 @@ function bindAdminLogin() {
 
       error.textContent = 'Autenticando...';
 
-      // Login via Firebase Authentication com e-mail fixo e a senha informada
       firebase.auth().signInWithEmailAndPassword('drikao.bass@gmail.com', senha)
         .then(() => {
           adminLogado = true;
@@ -184,7 +181,6 @@ function openAdmin() {
   document.getElementById('main-content').style.display = 'none';
   document.getElementById('admin-page').classList.add('open');
 
-  // Tentar carregar do Firebase primeiro ou fallback para LS
   if (typeof database !== 'undefined') {
     database.ref('produtos').once('value').then(snapshot => {
       const prodFirebase = snapshot.val();
@@ -225,7 +221,6 @@ function closeAdmin() {
   document.getElementById('admin-page').classList.remove('open');
   document.getElementById('main-content').style.display = '';
 
-  // Recarregar dados na página principal
   if (typeof STATE !== 'undefined') {
     STATE.config   = loadLS('config', {});
     STATE.produtos = loadLS('produtos', []);
@@ -236,11 +231,9 @@ function closeAdmin() {
 
 /* ── Tabs ──────────────────────────────────────────────────── */
 function bindAdmin() {
-  // Fechar admin
   const btnClose = document.getElementById('btn-admin-close');
   if (btnClose) btnClose.addEventListener('click', closeAdmin);
 
-  // Tabs
   $$('.admin-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       $$('.admin-tab').forEach(t => t.classList.remove('active'));
@@ -251,15 +244,12 @@ function bindAdmin() {
     });
   });
 
-  // Salvar configurações
   const btnSaveCfg = document.getElementById('btn-save-config');
   if (btnSaveCfg) btnSaveCfg.addEventListener('click', salvarConfig);
 
-  // Novo produto
   const btnNovoProd = document.getElementById('btn-novo-produto');
   if (btnNovoProd) btnNovoProd.addEventListener('click', () => abrirModalProduto(null));
 
-  // Modal produto
   const btnCloseProdModal = document.getElementById('btn-admin-produto-close');
   if (btnCloseProdModal) btnCloseProdModal.addEventListener('click', fecharModalProduto);
 
@@ -269,7 +259,6 @@ function bindAdmin() {
   const inputFile = document.getElementById('admin-produto-img-file');
   if (inputFile) inputFile.addEventListener('change', handleImgUpload);
 
-  // Botão cancelar do modal produto
   const btnCancelProd = document.getElementById('btn-admin-produto-cancel');
   if (btnCancelProd) {
     btnCancelProd.addEventListener('click', fecharModalProduto);
@@ -280,7 +269,7 @@ function bindAdmin() {
 function preencherConfigForm() {
   const c = loadLS('config', {});
   const def = {
-    whatsapp: '5500000000000',
+    whatsapp: '5562981401158', // ✅ Número correto
     heroTitle: 'Braseiro Costelaria',
     heroSubtitle: 'Costela assada no bafo.',
     heroBadge1: '🥩 Costelas artesanais.',
@@ -323,19 +312,63 @@ function renderAdminProdutos() {
     return;
   }
 
-  container.innerHTML = lista.map(p => `
-    <div class="produto-admin-item" data-id="${p.id}">
-      <img class="produto-admin-img" src="${p.img}" alt="${p.nome}" onerror="this.src='assets/produtos/placeholder.jpg'">
-      <div class="produto-admin-info">
-        <div class="produto-admin-nome">${p.nome}</div>
-        <div class="produto-admin-preco">${fmtBRL(p.preco)}</div>
-        <div class="produto-admin-status ${p.ativo ? 'ativo' : 'inativo'}">${p.ativo ? '● Ativo' : '● Inativo'}</div>
+  const ordemCategorias = ['costelas', 'acompanhamentos', 'bebidas', 'combos'];
+  const categorias = {};
+
+  lista.forEach(p => {
+    const cat = p.categoria || 'outros';
+    if (!categorias[cat]) categorias[cat] = [];
+    categorias[cat].push(p);
+  });
+
+  let html = '';
+  
+  ordemCategorias.forEach(catKey => {
+    if (!categorias[catKey]) return;
+
+    const itens = categorias[catKey];
+    itens.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+
+    let displayName = catKey;
+    if (catKey === 'costelas') displayName = '🥩 Carnes no Bafo';
+    else if (catKey === 'acompanhamentos') displayName = '🍚 Acompanhamentos';
+    else if (catKey === 'bebidas') displayName = '🥤 Bebidas';
+    else if (catKey === 'combos') displayName = '🔥 Combos';
+
+    html += `<div style="margin-bottom: 30px; border-bottom: 2px solid var(--grafite-3); padding-bottom: 15px;">`;
+    html += `<h4 style="color: var(--dourado); margin-bottom: 15px;">${displayName}</h4>`;
+    
+    html += itens.map(p => `
+      <div class="produto-admin-item" data-id="${p.id}">
+        <div class="produto-admin-ordem" style="display:flex; flex-direction:column; gap:4px; margin-right:12px;">
+          <button class="btn-admin-ordem-up" data-id="${p.id}" data-categoria="${catKey}" title="Mover para cima">⬆</button>
+          <span style="font-size:0.75rem; color: var(--texto-muted); text-align:center;">${p.ordem || '0'}</span>
+          <button class="btn-admin-ordem-down" data-id="${p.id}" data-categoria="${catKey}" title="Mover para baixo">⬇</button>
+        </div>
+        <img class="produto-admin-img" src="${p.img}" alt="${p.nome}" onerror="this.src='assets/produtos/placeholder.jpg'">
+        <div class="produto-admin-info">
+          <div class="produto-admin-nome">${p.nome}</div>
+          <div class="produto-admin-preco">${fmtBRL(p.preco)}</div>
+          <div class="produto-admin-status ${p.ativo ? 'ativo' : 'inativo'}">${p.ativo ? '● Ativo' : '● Inativo'}</div>
+        </div>
+        <div class="produto-admin-actions">
+          <button class="btn-admin-secondary btn-editar-produto" data-id="${p.id}">Editar</button>
+          <button class="btn-admin-danger btn-excluir-produto" data-id="${p.id}">Excluir</button>
+        </div>
       </div>
-      <div class="produto-admin-actions">
-        <button class="btn-admin-secondary btn-editar-produto" data-id="${p.id}">Editar</button>
-        <button class="btn-admin-danger btn-excluir-produto" data-id="${p.id}">Excluir</button>
-      </div>
-    </div>`).join('');
+    `).join('');
+    
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+
+  $$('.btn-admin-ordem-up').forEach(btn => {
+    btn.addEventListener('click', () => alterarOrdem(btn.dataset.id, btn.dataset.categoria, -1));
+  });
+  $$('.btn-admin-ordem-down').forEach(btn => {
+    btn.addEventListener('click', () => alterarOrdem(btn.dataset.id, btn.dataset.categoria, 1));
+  });
 
   $$('.btn-editar-produto').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -450,14 +483,6 @@ function salvarProduto() {
     imgFinal = imagemComprimida;
   }
 
-  if (editandoProdutoId && !imgUrl && !imagemComprimida) {
-    const listaAtual = loadLS('produtos', []);
-    const prodAtual = listaAtual.find(p => p.id === editandoProdutoId);
-    if (prodAtual) {
-      imgFinal = prodAtual.img;
-    }
-  }
-
   let lista = loadLS('produtos', []);
 
   if (editandoProdutoId) {
@@ -466,8 +491,28 @@ function salvarProduto() {
       : p);
     showToast('✅ Produto atualizado!');
   } else {
-    lista.push({ id: uid(), nome, preco, categoria, descricao: desc, img: imgFinal, ativo });
-    showToast('✅ Produto adicionado!');
+    // NOVO PRODUTO: Calcula a ordem correta para o final da categoria
+    const itensMesmaCategoria = lista.filter(p => p.categoria === categoria);
+    
+    let maiorOrdem = 0;
+    if (itensMesmaCategoria.length > 0) {
+      const sorted = itensMesmaCategoria.sort((a, b) => (b.ordem || 0) - (a.ordem || 0));
+      maiorOrdem = sorted[0].ordem || 0;
+    }
+
+    const novaOrdem = maiorOrdem + 10;
+
+    lista.push({ 
+      id: uid(), 
+      nome, 
+      preco, 
+      categoria, 
+      descricao: desc, 
+      img: imgFinal, 
+      ativo,
+      ordem: novaOrdem 
+    });
+    showToast('✅ Produto adicionado ao final da categoria!');
   }
 
   saveLS('produtos', lista);
@@ -475,6 +520,48 @@ function salvarProduto() {
 
   fecharModalProduto();
   renderAdminProdutos();
+}
+
+/* ── Lógica de Ordenação (Swap e Atualização) ─────────────── */
+function alterarOrdem(id, categoria, direcao) {
+  let lista = loadLS('produtos', []);
+  
+  let itensCategoria = lista.filter(p => p.categoria === categoria).sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+  
+  const indexAtual = itensCategoria.findIndex(p => p.id === id);
+  if (indexAtual === -1) return;
+
+  const novoIndex = indexAtual + direcao;
+  if (novoIndex < 0 || novoIndex >= itensCategoria.length) {
+    showToast('⚠️ Já está no limite da lista.');
+    return;
+  }
+
+  [itensCategoria[indexAtual], itensCategoria[novoIndex]] = [itensCategoria[novoIndex], itensCategoria[indexAtual]];
+
+  itensCategoria.forEach((p, i) => {
+    p.ordem = (i + 1) * 10;
+  });
+
+  itensCategoria.forEach(p => {
+    const idxMain = lista.findIndex(x => x.id === p.id);
+    if (idxMain !== -1) {
+      lista[idxMain].ordem = p.ordem;
+    }
+  });
+
+  saveLS('produtos', lista);
+  syncProdutosToFirebase(lista);
+  renderAdminProdutos();
+  
+  if (typeof STATE !== 'undefined' && typeof renderProdutos === 'function') {
+    STATE.produtos = lista;
+    const activeFilterBtn = $('.filter-btn.active');
+    const filtroAtual = activeFilterBtn ? activeFilterBtn.dataset.filter : 'todos';
+    renderProdutos(filtroAtual);
+  }
+  
+  showToast('✅ Ordem atualizada!');
 }
 
 /* ── Expor funções globais ─────────────────────────────────── */
