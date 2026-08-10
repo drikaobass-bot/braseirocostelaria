@@ -5,6 +5,7 @@
 
 'use strict';
 
+/* ── Criptografia ──────────────────────────────────────────── */
 function encryptData(data, key = 'braseiro_secure_2024') {
   try {
     const jsonStr = JSON.stringify(data);
@@ -37,16 +38,19 @@ function decryptData(encryptedData, key = 'braseiro_secure_2024') {
   }
 }
 
+/* ── Regras de Negócio e Taxas ─────────────────────────────── */
 const TAXA_DELIVERY = 5.00;
 const PEDIDO_MINIMO_DELIVERY = 50.00;
 
+/* ── Estado Global ─────────────────────────────────────────── */
 const STATE = {
-  cart: [],
-  produtos: [],
-  config: {},
-  modalProduto: null
+  cart: [],          // { id, nome, preco, img, qty }
+  produtos: [],      // carregados do Firebase / localStorage / defaults
+  config: {},        // whatsapp, textos, etc.
+  modalProduto: null // produto aberto no modal
 };
 
+/* ── Configuração padrão ───────────────────────────────────── */
 const DEFAULT_CONFIG = {
   whatsapp: '5562981401158',
   heroTitle: 'Braseiro Costelaria',
@@ -56,6 +60,7 @@ const DEFAULT_CONFIG = {
   heroBadge3: '⏳ Produção artesanal.'
 };
 
+/* ── Utilitários ───────────────────────────────────────────── */
 function $(sel, ctx = document) { return ctx.querySelector(sel); }
 function $$(sel, ctx = document) { return [...ctx.querySelectorAll(sel)]; }
 function fmtBRL(v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
@@ -86,6 +91,7 @@ function loadLS(key, def) {
   }
 }
 
+/* ── Toast ─────────────────────────────────────────────────── */
 function showToast(msg) {
   const c = $('#toast-container');
   if (!c) return;
@@ -97,6 +103,7 @@ function showToast(msg) {
   setTimeout(() => t.remove(), 4000);
 }
 
+/* ── Migração e Ordenação ──────────────────────────────────── */
 function migrarOrdenacaoProdutos(produtos) {
   if (!produtos || produtos.length === 0) return [];
   
@@ -120,6 +127,7 @@ function migrarOrdenacaoProdutos(produtos) {
   return produtosOrdenados;
 }
 
+/* ── Init ──────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   STATE.config = loadLS('config', DEFAULT_CONFIG);
   
@@ -150,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+/* ── Sincronização em Tempo Real Firebase ──────────────────── */
 function initFirebaseListeners() {
   if (typeof database === 'undefined') return;
 
@@ -182,6 +191,7 @@ function initFirebaseListeners() {
   }, err => console.warn('Erro ao escutar configurações no Firebase:', err));
 }
 
+/* ── Aplicar configurações ─────────────────────────────────── */
 function applyConfig() {
   const c = STATE.config;
   const el = (id) => document.getElementById(id);
@@ -192,6 +202,7 @@ function applyConfig() {
   if (el('hero-badge3'))   el('hero-badge3').textContent   = c.heroBadge3   || DEFAULT_CONFIG.heroBadge3;
 }
 
+/* ── Renderizar Produtos ───────────────────────────────────── */
 function renderProdutos(filtro = 'todos') {
   const grid = $('#produtos-grid');
   if (!grid) return;
@@ -251,6 +262,7 @@ function renderProdutos(filtro = 'todos') {
   });
 }
 
+/* ── Filtro ────────────────────────────────────────────────── */
 function bindNav() {
   $$('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -278,6 +290,7 @@ function bindNav() {
   }
 }
 
+/* ── Modal Imagem ──────────────────────────────────────────── */
 function openModalImg(id) {
   const p = STATE.produtos.find(x => x.id === id);
   if (!p) return;
@@ -322,6 +335,7 @@ function bindModalImg() {
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalImg(); });
 }
 
+/* ── Carrinho ──────────────────────────────────────────────── */
 function addToCart(id) {
   const p = STATE.produtos.find(x => x.id === id);
   if (!p) return;
@@ -476,6 +490,7 @@ function bindCart() {
   updateCartUI();
 }
 
+/* ── Modal Pedido ──────────────────────────────────────────── */
 let pedidoStep = 1;
 let tipoEntrega = '';
 
@@ -741,6 +756,7 @@ function enviarWhatsApp() {
   showToast('Pedido enviado com sucesso!');
 }
 
+/* ── Service Worker ────────────────────────────────────────── */
 function registerSW() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js')
