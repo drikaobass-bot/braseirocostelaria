@@ -3,7 +3,6 @@
    Paleta: Preto, Grafite, Vermelho Escuro, Dourado, Branco
    ============================================================ */
 
-/* ── Reset & Base ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -43,21 +42,17 @@ img { max-width: 100%; display: block; }
 button { cursor: pointer; font-family: inherit; border: none; outline: none; }
 input, select, textarea { font-family: inherit; }
 
-/* ── Scrollbar ────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--grafite); }
 ::-webkit-scrollbar-thumb { background: var(--dourado); border-radius: 3px; }
 
-/* ── Typography ───────────────────────────────────────────── */
 h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
 
-/* ── Utility ──────────────────────────────────────────────── */
 .container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
 .text-gold  { color: var(--dourado); }
 .text-red   { color: var(--vermelho-vivo); }
 .sr-only    { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
-/* ── Header / Navbar ──────────────────────────────────────── */
 #navbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 900;
   background: rgba(13,13,13,.96);
@@ -90,7 +85,6 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
 .nav-links a:hover { color: var(--dourado); }
 @media (max-width: 600px) { .nav-links { display: none; } }
 
-/* ── Hero ─────────────────────────────────────────────────── */
 #hero {
   position: relative;
   min-height: 100svh;
@@ -170,7 +164,6 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
 .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(192,57,43,.6); }
 .btn-hero:active { transform: translateY(0); }
 
-/* ── Section ──────────────────────────────────────────────── */
 .section { padding: 72px 0; }
 .section-title {
   font-size: clamp(1.6rem, 4vw, 2.4rem);
@@ -185,7 +178,6 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
   border-radius: 2px;
 }
 
-/* ── Cardápio / Grid ──────────────────────────────────────── */
 #cardapio { background: var(--grafite); }
 
 .filter-bar {
@@ -215,7 +207,6 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
   gap: 24px;
 }
 
-/* ── Card de Produto ──────────────────────────────────────── */
 .produto-card {
   background: var(--grafite-2);
   border-radius: var(--radius);
@@ -296,7 +287,6 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
 .btn-add:active { transform: translateY(0); }
 .produto-card.inativo { opacity: .4; pointer-events: none; }
 
-/* ── Modal Imagem ─────────────────────────────────────────── */
 #modal-img {
   display: none;
   position: fixed; inset: 0; z-index: 1100;
@@ -355,7 +345,6 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
 }
 .btn-modal-close:hover { background: var(--vermelho); }
 
-/* ── Carrinho Flutuante ───────────────────────────────────── */
 #cart-fab {
   position: fixed; bottom: 24px; right: 24px; z-index: 950;
   background: linear-gradient(135deg, var(--vermelho), var(--vermelho-vivo));
@@ -383,7 +372,6 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
 }
 #cart-badge.visible { display: flex; }
 
-/* ── Painel Carrinho ──────────────────────────────────────── */
 #cart-panel {
   position: fixed; inset: 0; z-index: 1050;
   display: none;
@@ -499,7 +487,6 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
 .btn-finalizar:hover { opacity: .9; }
 .btn-finalizar:disabled { opacity: .4; cursor: not-allowed; }
 
-/* ── Modal Pedido ─────────────────────────────────────────── */
 #modal-pedido {
   display: none;
   position: fixed; inset: 0; z-index: 1200;
@@ -534,13 +521,11 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
 }
 .pedido-body { padding: 24px; }
 
-/* Steps */
 .step { display: none; }
 .step.active { display: block; animation: fadeInUp .3s ease; }
 
 .step-title { font-size: 1rem; font-weight: 700; color: var(--dourado); margin-bottom: 20px; }
 
-/* Tipo entrega */
 .entrega-opcoes { display: flex; gap: 12px; margin-bottom: 8px; }
 .entrega-opcao {
   flex: 1;
@@ -557,7 +542,6 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
 .entrega-opcao .icon { font-size: 1.8rem; margin-bottom: 6px; }
 .entrega-opcao .label { font-size: .9rem; font-weight: 600; }
 
-/* Formulário */
 .form-group { margin-bottom: 14px; }
 .form-group label { display: block; font-size: .82rem; color: var(--texto-muted); margin-bottom: 5px; font-weight: 500; letter-spacing: .03em; }
 .form-group input,
@@ -587,7 +571,6 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
 
-/* Resumo pedido */
 .resumo-itens { margin-bottom: 16px; }
 .resumo-item {
   display: flex; justify-content: space-between;
@@ -645,7 +628,6 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: .02em; }
 }
 .btn-whatsapp:hover { opacity: .9; }
 
-/* ── Sobre / Footer ───────────────────────────────────────── */
 #sobre { background: var(--preto); }
 .sobre-grid {
   display: grid;
@@ -667,7 +649,6 @@ footer {
 .footer-sub { font-size: .82rem; color: var(--texto-muted); }
 .footer-copy { font-size: .78rem; color: var(--grafite-3); margin-top: 16px; }
 
-/* ── Toast ────────────────────────────────────────────────── */
 #toast-container {
   position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
   z-index: 2000;
@@ -687,7 +668,6 @@ footer {
   box-shadow: var(--sombra-card);
 }
 
-/* ── Admin ────────────────────────────────────────────────── */
 #admin-page {
   display: none;
   min-height: 100vh;
@@ -789,7 +769,6 @@ footer {
 .produto-admin-status.inativo { color: var(--vermelho-vivo); }
 .produto-admin-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
-/* Modal Admin Produto */
 #modal-admin-produto {
   display: none;
   position: fixed; inset: 0; z-index: 1300;
@@ -817,7 +796,6 @@ footer {
 .admin-produto-header h3 { font-size: 1rem; color: var(--dourado); }
 .admin-produto-body { padding: 20px; }
 
-/* Toggle switch */
 .toggle-wrap { display: flex; align-items: center; gap: 10px; }
 .toggle {
   position: relative;
@@ -844,7 +822,6 @@ footer {
 .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
 .toggle-label { font-size: .88rem; color: var(--branco-soft); }
 
-/* ── Login Admin ──────────────────────────────────────────── */
 #admin-login {
   display: none;
   position: fixed; inset: 0; z-index: 1400;
@@ -865,7 +842,6 @@ footer {
 .login-box p { color: var(--texto-muted); font-size: .85rem; margin-bottom: 24px; }
 .login-error { color: var(--vermelho-vivo); font-size: .82rem; margin-top: 8px; min-height: 18px; }
 
-/* ── Keyframes ────────────────────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -891,7 +867,6 @@ footer {
   to   { opacity: 0; }
 }
 
-/* ── Responsivo ───────────────────────────────────────────── */
 @media (max-width: 480px) {
   .produtos-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
   .produto-info { padding: 12px; }
@@ -903,9 +878,6 @@ footer {
   .entrega-opcoes { flex-direction: column; }
 }
 
-/* ── CORREÇÕES: Mensagem de Pedido Mínimo - Responsivo ──── */
-
-/* Mensagem no carrinho */
 #cart-minimo-info {
     font-size: 0.85rem;
     padding: 8px 10px;
@@ -917,7 +889,6 @@ footer {
     max-width: 100%;
 }
 
-/* Mensagem no modal de entrega */
 #aviso-pedido-minimo {
     font-size: 0.85rem;
     color: var(--texto-muted, #999);
@@ -932,7 +903,6 @@ footer {
     max-width: 100%;
 }
 
-/* Ajuste do toast para mensagens longas */
 #toast-container .toast {
     white-space: pre-line;
     max-width: 90vw;
@@ -943,29 +913,12 @@ footer {
     border-radius: 10px;
 }
 
-/* Ajuste específico para mobile */
 @media screen and (max-width: 480px) {
-    #cart-minimo-info {
-        font-size: 0.75rem;
-        padding: 6px 8px;
-    }
-    
-    #aviso-pedido-minimo {
-        font-size: 0.75rem;
-        padding: 8px 10px;
-        margin-top: 10px;
-    }
-    
-    #toast-container .toast {
-        font-size: 0.75rem;
-        padding: 10px 14px;
-        max-width: 95vw;
-        white-space: normal;
-        word-wrap: break-word;
-    }
+    #cart-minimo-info { font-size: 0.75rem; padding: 6px 8px; }
+    #aviso-pedido-minimo { font-size: 0.75rem; padding: 8px 10px; margin-top: 10px; }
+    #toast-container .toast { font-size: 0.75rem; padding: 10px 14px; max-width: 95vw; white-space: normal; word-wrap: break-word; }
 }
 
-/* ── Ajuste de Visibilidade: Forma de Pagamento e Troco ── */
 #forma-pagamento,
 #troco-para {
   width: 100% !important;
