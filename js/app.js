@@ -9,7 +9,6 @@
 // SEGURANÇA: Criptografia para LocalStorage
 // ============================================================
 
-// Função para criptografar dados antes de salvar no LocalStorage
 function encryptData(data, key = 'braseiro_secure_2024') {
   try {
     const jsonStr = JSON.stringify(data);
@@ -26,7 +25,6 @@ function encryptData(data, key = 'braseiro_secure_2024') {
   }
 }
 
-// Função para descriptografar dados do LocalStorage
 function decryptData(encryptedData, key = 'braseiro_secure_2024') {
   try {
     const decoded = atob(encryptedData);
@@ -57,70 +55,13 @@ const STATE = {
 
 /* ── Configuração padrão ───────────────────────────────────── */
 const DEFAULT_CONFIG = {
-  whatsapp: '5500000000000',
+  whatsapp: '5562981401158', // ✅ Número correto do WhatsApp
   heroTitle: 'Braseiro Costelaria',
   heroSubtitle: 'Costela assada no bafo.',
   heroBadge1: '🥩 Costelas artesanais.',
-  heroBadge2: '📅 Encomendas para sábado, domingo e feriados.',
+  heroBadge2: '📅 Encomendas para sexta, sábado, domingo e feriados.',
   heroBadge3: '⏳ Produção artesanal.'
 };
-
-const DEFAULT_PRODUTOS = [
-  {
-    id: 'p1',
-    nome: 'Costela Bovina Inteira',
-    preco: 120.00,
-    categoria: 'costelas',
-    descricao: 'Costela bovina assada no bafo por 12h. Serve 4 a 6 pessoas.',
-    img: 'assets/produtos/placeholder.jpg',
-    ativo: true
-  },
-  {
-    id: 'p2',
-    nome: 'Costela Suína',
-    preco: 90.00,
-    categoria: 'costelas',
-    descricao: 'Costela suína temperada artesanalmente. Serve 3 a 4 pessoas.',
-    img: 'assets/produtos/placeholder.jpg',
-    ativo: true
-  },
-  {
-    id: 'p3',
-    nome: 'Meia Costela',
-    preco: 65.00,
-    categoria: 'costelas',
-    descricao: 'Meia costela bovina no bafo. Serve 2 a 3 pessoas.',
-    img: 'assets/produtos/placeholder.jpg',
-    ativo: true
-  },
-  {
-    id: 'p4',
-    nome: 'Arroz Grande',
-    preco: 25.00,
-    categoria: 'acompanhamentos',
-    descricao: 'Arroz branco soltinho. Porção grande.',
-    img: 'assets/produtos/placeholder.jpg',
-    ativo: true
-  },
-  {
-    id: 'p5',
-    nome: 'Feijão Tropeiro',
-    preco: 30.00,
-    categoria: 'acompanhamentos',
-    descricao: 'Feijão tropeiro tradicional com bacon e couve.',
-    img: 'assets/produtos/placeholder.jpg',
-    ativo: true
-  },
-  {
-    id: 'p6',
-    nome: 'Farofa Especial',
-    preco: 20.00,
-    categoria: 'acompanhamentos',
-    descricao: 'Farofa crocante com bacon e ervas.',
-    img: 'assets/produtos/placeholder.jpg',
-    ativo: true
-  }
-];
 
 /* ── Utilitários ───────────────────────────────────────────── */
 function $(sel, ctx = document) { return ctx.querySelector(sel); }
@@ -163,6 +104,30 @@ function showToast(msg) {
   t.textContent = msg;
   c.appendChild(t);
   setTimeout(() => t.remove(), 4000);
+}
+
+/* ── Migração e Ordenação ──────────────────────────────────── */
+function migrarOrdenacaoProdutos(produtos) {
+  if (!produtos || produtos.length === 0) return [];
+  
+  let precisaSalvar = false;
+  
+  const produtosOrdenados = produtos.map((p, index) => {
+    if (p.ordem === undefined || p.ordem === null) {
+      p.ordem = (index + 1) * 10;
+      precisaSalvar = true;
+    }
+    return p;
+  });
+
+  if (precisaSalvar) {
+    saveLS('produtos', produtosOrdenados);
+    if (typeof database !== 'undefined') {
+      database.ref('produtos').set(produtosOrdenados).catch(err => console.warn('Erro ao salvar migração no Firebase', err));
+    }
+  }
+
+  return produtosOrdenados;
 }
 
 /* ── Init ──────────────────────────────────────────────────── */
@@ -246,10 +211,25 @@ function renderProdutos(filtro = 'todos') {
   if (!grid) return;
   grid.innerHTML = '';
 
-  const lista = STATE.produtos.filter(p => {
+  STATE.produtos = migrarOrdenacaoProdutos(STATE.produtos);
+
+  let lista = STATE.produtos.filter(p => {
     if (!p.ativo) return false;
     if (filtro === 'todos') return true;
     return p.categoria === filtro;
+  });
+
+  const ordemCategorias = ['costelas', 'acompanhamentos', 'bebidas', 'combos'];
+  
+  lista.sort((a, b) => {
+    const indexA = ordemCategorias.indexOf(a.categoria);
+    const indexB = ordemCategorias.indexOf(b.categoria);
+    if (indexA !== indexB) return indexA - indexB;
+
+    const ordemDiff = (a.ordem || 0) - (b.ordem || 0);
+    if (ordemDiff !== 0) return ordemDiff;
+
+    return a.nome.localeCompare(b.nome);
   });
 
   if (lista.length === 0) {
@@ -363,7 +343,6 @@ function addToCart(id) {
   const p = STATE.produtos.find(x => x.id === id);
   if (!p) return;
   
-  // Validação de segurança: garantir que o preço é um número
   if (typeof p.preco !== 'number' || p.preco < 0 || p.preco > 99999) {
     showToast('⚠️ Produto inválido.');
     return;
@@ -401,7 +380,6 @@ function clearCart() {
 
 function cartTotal() { 
   return STATE.cart.reduce((s, i) => {
-    // Validação extra: garantir que preço e quantidade são números
     const preco = typeof i.preco === 'number' ? i.preco : 0;
     const qty = typeof i.qty === 'number' ? i.qty : 0;
     return s + preco * qty;
@@ -418,7 +396,6 @@ function updateCartUI() {
   badge.classList.toggle('visible', cnt > 0);
 }
 
-/* ── CORREÇÃO: renderCartItems com mensagem responsiva ───── */
 function renderCartItems() {
   const container = document.getElementById('cart-items');
   const total = document.getElementById('cart-total');
@@ -437,7 +414,6 @@ function renderCartItems() {
   const subtotal = cartTotal();
   if (total) total.textContent = fmtBRL(subtotal);
 
-  // Mensagem dinâmica sobre o pedido mínimo no carrinho
   let infoMinimo = document.getElementById('cart-minimo-info');
   if (!infoMinimo) {
     infoMinimo = document.createElement('div');
@@ -447,7 +423,6 @@ function renderCartItems() {
     }
   }
 
-  // Formata a mensagem de forma mais amigável e compacta
   if (subtotal < PEDIDO_MINIMO_DELIVERY) {
     const faltam = PEDIDO_MINIMO_DELIVERY - subtotal;
     infoMinimo.style.color = '#e67e22';
@@ -527,7 +502,6 @@ function openModalPedido() {
   tipoEntrega = '';
   $$('.entrega-opcao').forEach(o => o.classList.remove('selected'));
   
-  // Insere um aviso discreto sobre o pedido mínimo no modal de entrega, se não existir
   let avisoMinimo = document.getElementById('aviso-pedido-minimo');
   if (!avisoMinimo) {
     const containerOpcoes = document.querySelector('.entrega-opcoes') || document.getElementById('step-1');
@@ -562,7 +536,6 @@ function showStep(n) {
   if (el) el.classList.add('active');
 }
 
-/* ── CORREÇÃO: bindPedido com validação de pedido mínimo ── */
 function bindPedido() {
   const modal = document.getElementById('modal-pedido');
   if (!modal) return;
@@ -595,7 +568,6 @@ function bindPedido() {
     });
   });
 
-  // Step 1 → 2 com validação do pedido mínimo - VERSÃO CORRIGIDA
   const btnStep1 = document.getElementById('btn-step1-next');
   if (btnStep1) {
     btnStep1.addEventListener('click', () => {
@@ -604,8 +576,6 @@ function bindPedido() {
       const subtotal = cartTotal();
       if (tipoEntrega === 'delivery' && subtotal < PEDIDO_MINIMO_DELIVERY) {
         const faltam = PEDIDO_MINIMO_DELIVERY - subtotal;
-        
-        // Mostra toast com mensagem mais amigável e quebrada em linhas
         showToast(
           `🚫 Pedido mínimo: ${fmtBRL(PEDIDO_MINIMO_DELIVERY)}\n` +
           `Faltam ${fmtBRL(faltam)} para finalizar\n` +
