@@ -150,15 +150,29 @@ function bindAdminLogin() {
 
       error.textContent = 'Autenticando...';
 
+      // ✅ CORREÇÃO: Firebase Authentication com validação de e-mail
       firebase.auth().signInWithEmailAndPassword('drikao.bass@gmail.com', senha)
-        .then(() => {
+        .then((userCredential) => {
+          // Login bem-sucedido!
           adminLogado = true;
           closeAdminLogin();
           openAdmin();
+          console.log('Login realizado com sucesso:', userCredential.user.email);
         })
         .catch(err => {
           console.error('Erro na autenticação Firebase:', err);
-          error.textContent = 'Senha incorreta ou erro de autenticação.';
+          
+          // Mensagens de erro mais amigáveis
+          if (err.code === 'auth/wrong-password') {
+            error.textContent = 'Senha incorreta. Verifique e tente novamente.';
+          } else if (err.code === 'auth/user-not-found') {
+            error.textContent = 'Usuário não encontrado. Verifique o e-mail.';
+          } else if (err.code === 'auth/too-many-requests') {
+            error.textContent = 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
+          } else {
+            error.textContent = 'Erro ao fazer login: ' + err.message;
+          }
+          
           input.value = '';
           input.focus();
         });
@@ -269,7 +283,7 @@ function bindAdmin() {
 function preencherConfigForm() {
   const c = loadLS('config', {});
   const def = {
-    whatsapp: '5562981401158', // ✅ Número correto
+    whatsapp: '5562981401158',
     heroTitle: 'Braseiro Costelaria',
     heroSubtitle: 'Costela assada no bafo.',
     heroBadge1: '🥩 Costelas artesanais.',
