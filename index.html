@@ -37,14 +37,14 @@
   <link rel="shortcut icon" href="assets/icons/favicon.ico">
 
   <title>Braseiro Costelaria — Cardápio Digital</title>
-  <link rel="stylesheet" href="css/style.css?v=4">
+  <link rel="stylesheet" href="css/style.css?v=5">
 </head>
 <body>
 
 <nav id="navbar" role="navigation" aria-label="Navegação principal">
   <div class="container nav-inner">
     <a href="#" class="nav-logo" aria-label="Braseiro Costelaria - Início">
-      <img src="assets/logo/logo.png?v=4" alt="Logo Braseiro Costelaria" onerror="this.style.display='none'">
+      <img src="assets/logo/logo.png?v=5" alt="Logo Braseiro Costelaria" onerror="this.style.display='none'">
       <div class="nav-logo-text">
         Braseiro
         <span>Costelaria</span>
@@ -65,7 +65,7 @@
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <img
-        src="assets/logo/logo.png?v=4"
+        src="assets/logo/logo.png?v=5"
         alt="Braseiro Costelaria"
         class="hero-logo-img"
         onerror="this.style.display='none'"
@@ -337,7 +337,7 @@
             <span style="color: #bbb;">Produtos:</span>
             <span id="resumo-subtotal-val">R$ 0,00</span>
           </div>
-          <div id="linha-taxa-resumo" style="display:flex; justify-between; margin-bottom: 6px; color: #e5a93b;">
+          <div id="linha-taxa-resumo" style="display:flex; justify-content:space-between; margin-bottom: 6px; color: #e5a93b;">
             <span>Entrega:</span>
             <span id="resumo-taxa-val">R$ 5,00</span>
           </div>
@@ -521,7 +521,18 @@
   window.database = firebase.database();
 </script>
 
-<script src="js/app.js?v=4"></script>
-<script src="js/admin.js?v=4"></script>
+<script src="js/app.js?v=5"></script>
+<script src="js/admin.js?v=5"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      const swPath = navigator.userAgent.includes('Chrome') ? 'sw.js' : 'service-worker.js';
+      navigator.serviceWorker.register(swPath).catch(() => {
+        navigator.serviceWorker.register('service-worker.js').catch(() => {});
+      });
+    });
+  }
+</script>
 </body>
 </html>
