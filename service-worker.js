@@ -1,6 +1,7 @@
 /* ============================================================
    BRASEIRO COSTELARIA — Service Worker
-   Estratégia: Cache First para assets, Network First para HTML   ============================================================ */
+   Estratégia: Cache First para assets, Network First para HTML
+   ============================================================ */
 
 const CACHE_VERSION = 'v1.0.3';
 const CACHE_STATIC  = `braseiro-static-${CACHE_VERSION}`;
