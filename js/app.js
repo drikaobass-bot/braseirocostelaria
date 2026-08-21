@@ -127,6 +127,60 @@ function migrarOrdenacaoProdutos(produtos) {
   return produtosOrdenados;
 }
 
+/* ── Produtos Padrão (Fallback) - NUNCA MAIS MEXA AQUI ────── */
+const DEFAULT_PRODUTOS = [
+  {
+    id: 'p1',
+    nome: 'Costela Bovina Inteira (aprox. 2kg)',
+    preco: 129.90,
+    categoria: 'costelas',
+    descricao: 'A costela bovina do Braseiro, assada lentamente no bafo por 10 horas. Tempero artesanal.',
+    img: 'assets/produtos/placeholder.jpg',
+    ativo: true,
+    ordem: 10
+  },
+  {
+    id: 'p2',
+    nome: 'Costela Suína (aprox. 1,5kg)',
+    preco: 89.90,
+    categoria: 'costelas',
+    descricao: 'Costela suína com molho barbecue artesanal, caramelizada na brasa.',
+    img: 'assets/produtos/placeholder.jpg',
+    ativo: true,
+    ordem: 20
+  },
+  {
+    id: 'p3',
+    nome: 'Mandioca Frita (Porção)',
+    preco: 22.90,
+    categoria: 'acompanhamentos',
+    descricao: 'Mandioca frita crocante, servida com molho especial da casa.',
+    img: 'assets/produtos/placeholder.jpg',
+    ativo: true,
+    ordem: 10
+  },
+  {
+    id: 'p4',
+    nome: 'Refrigerante Lata (350ml)',
+    preco: 6.50,
+    categoria: 'bebidas',
+    descricao: 'Coca-Cola, Guaraná Antarctica ou Fanta Laranja.',
+    img: 'assets/produtos/placeholder.jpg',
+    ativo: true,
+    ordem: 10
+  },
+  {
+    id: 'p5',
+    nome: 'Combo Família (Costela Bovina + 2 Acomp.)',
+    preco: 179.90,
+    categoria: 'combos',
+    descricao: 'Costela bovina inteira + Mandioca frita + Refrigerante 2L.',
+    img: 'assets/produtos/placeholder.jpg',
+    ativo: true,
+    ordem: 10
+  }
+];
+
 /* ── Init ──────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   STATE.config = loadLS('config', DEFAULT_CONFIG);
@@ -345,421 +399,4 @@ function addToCart(id) {
     return;
   }
   
-  const existing = STATE.cart.find(x => x.id === id);
-  if (existing) { 
-    existing.qty++; 
-  } else { 
-    STATE.cart.push({ id: p.id, nome: p.nome, preco: p.preco, img: p.img, qty: 1 }); 
-  }
-  updateCartUI();
-  showToast(`✅ ${p.nome} adicionado!`);
-}
-
-function removeFromCart(id) {
-  STATE.cart = STATE.cart.filter(x => x.id !== id);
-  updateCartUI();
-  renderCartItems();
-}
-
-function changeQty(id, delta) {
-  const item = STATE.cart.find(x => x.id === id);
-  if (!item) return;
-  item.qty += delta;
-  if (item.qty <= 0) removeFromCart(id);
-  else { updateCartUI(); renderCartItems(); }
-}
-
-function clearCart() {
-  STATE.cart = [];
-  updateCartUI();
-  renderCartItems();
-}
-
-function cartTotal() { 
-  return STATE.cart.reduce((s, i) => {
-    const preco = typeof i.preco === 'number' ? i.preco : 0;
-    const qty = typeof i.qty === 'number' ? i.qty : 0;
-    return s + preco * qty;
-  }, 0); 
-}
-
-function cartCount() { return STATE.cart.reduce((s, i) => s + i.qty, 0); }
-
-function updateCartUI() {
-  const badge = document.getElementById('cart-badge');
-  if (!badge) return;
-  const cnt = cartCount();
-  badge.textContent = cnt;
-  badge.classList.toggle('visible', cnt > 0);
-}
-
-function renderCartItems() {
-  const container = document.getElementById('cart-items');
-  const total = document.getElementById('cart-total');
-  const btnFin = document.getElementById('btn-finalizar');
-
-  if (!container) return;
-
-  if (STATE.cart.length === 0) {
-    container.innerHTML = '<div class="cart-empty">🛒 Seu carrinho está vazio.</div>';
-    if (total) total.textContent = fmtBRL(0);
-    if (btnFin) btnFin.disabled = true;
-    return;
-  }
-  if (btnFin) btnFin.disabled = false;
-  
-  const subtotal = cartTotal();
-  if (total) total.textContent = fmtBRL(subtotal);
-
-  let infoMinimo = document.getElementById('cart-minimo-info');
-  if (!infoMinimo) {
-    infoMinimo = document.createElement('div');
-    infoMinimo.id = 'cart-minimo-info';
-    if (total && total.parentElement) {
-      total.parentElement.insertBefore(infoMinimo, total.parentElement.querySelector('.btn-limpar'));
-    }
-  }
-
-  if (subtotal < PEDIDO_MINIMO_DELIVERY) {
-    const faltam = PEDIDO_MINIMO_DELIVERY - subtotal;
-    infoMinimo.style.color = '#e67e22';
-    infoMinimo.style.fontWeight = '600';
-    infoMinimo.innerHTML = `
-      <span style="display:inline-block;">🛵 Faltam <strong>${fmtBRL(faltam)}</strong></span>
-      <span style="display:inline-block; margin-left:4px;">para finalizar o pedido</span>
-      <span style="display:block; font-weight:400; font-size:0.75rem; color:#888; margin-top:2px;">
-        Pedido mínimo: ${fmtBRL(PEDIDO_MINIMO_DELIVERY)}
-      </span>
-    `;
-  } else {
-    infoMinimo.style.color = '#27ae60';
-    infoMinimo.style.fontWeight = '500';
-    infoMinimo.textContent = `✅ Pedido mínimo atingido!`;
-  }
-
-  container.innerHTML = STATE.cart.map(item => `
-    <div class="cart-item" data-id="${item.id}">
-      <img class="cart-item-img" src="${item.img}" alt="${item.nome}" onerror="this.src='assets/produtos/placeholder.jpg'">
-      <div class="cart-item-info">
-        <div class="cart-item-nome">${item.nome}</div>
-        <div class="cart-item-preco">${fmtBRL(item.preco)}</div>
-        <div class="cart-item-controls">
-          <button class="btn-qty" data-id="${item.id}" data-delta="-1" aria-label="Diminuir">−</button>
-          <span class="qty-value">${item.qty}</span>
-          <button class="btn-qty" data-id="${item.id}" data-delta="1" aria-label="Aumentar">+</button>
-        </div>
-      </div>
-      <button class="btn-remove-item" data-id="${item.id}" aria-label="Remover">✕ Remover</button>
-    </div>`).join('');
-
-  $$('.btn-qty').forEach(btn => {
-    btn.addEventListener('click', () => changeQty(btn.dataset.id, parseInt(btn.dataset.delta)));
-  });
-  $$('.btn-remove-item').forEach(btn => {
-    btn.addEventListener('click', () => removeFromCart(btn.dataset.id));
-  });
-}
-
-function bindCart() {
-  const fab      = document.getElementById('cart-fab');
-  const panel    = document.getElementById('cart-panel');
-  if (!fab || !panel) return;
-
-  const backdrop = panel.querySelector('.cart-backdrop');
-  const btnClose = document.getElementById('btn-cart-close');
-  const btnLimpar = document.getElementById('btn-limpar');
-  const btnFin   = document.getElementById('btn-finalizar');
-
-  fab.addEventListener('click', () => {
-    panel.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    renderCartItems();
-  });
-
-  const closeCart = () => { panel.classList.remove('open'); document.body.style.overflow = ''; };
-  if (backdrop) backdrop.addEventListener('click', closeCart);
-  if (btnClose) btnClose.addEventListener('click', closeCart);
-  if (btnLimpar) btnLimpar.addEventListener('click', () => { clearCart(); showToast('Carrinho limpo.'); });
-  if (btnFin) {
-    btnFin.addEventListener('click', () => {
-      if (STATE.cart.length === 0) return;
-      closeCart();
-      openModalPedido();
-    });
-  }
-  updateCartUI();
-}
-
-/* ── Modal Pedido ──────────────────────────────────────────── */
-let pedidoStep = 1;
-let tipoEntrega = '';
-
-function openModalPedido() {
-  pedidoStep = 1;
-  tipoEntrega = '';
-  $$('.entrega-opcao').forEach(o => o.classList.remove('selected'));
-  
-  let avisoMinimo = document.getElementById('aviso-pedido-minimo');
-  if (!avisoMinimo) {
-    const containerOpcoes = document.querySelector('.entrega-opcoes') || document.getElementById('step-1');
-    if (containerOpcoes) {
-      avisoMinimo = document.createElement('div');
-      avisoMinimo.id = 'aviso-pedido-minimo';
-      avisoMinimo.style.fontSize = '0.85rem';
-      avisoMinimo.style.color = 'var(--texto-muted, #777)';
-      avisoMinimo.style.marginTop = '12px';
-      avisoMinimo.style.textAlign = 'center';
-      avisoMinimo.textContent = `ℹ️ Pedido mínimo para entrega: ${fmtBRL(PEDIDO_MINIMO_DELIVERY)}`;
-      containerOpcoes.appendChild(avisoMinimo);
-    }
-  }
-
-  const modal = document.getElementById('modal-pedido');
-  if (modal) modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  showStep(1);
-}
-
-function closeModalPedido() {
-  const modal = document.getElementById('modal-pedido');
-  if (modal) modal.classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function showStep(n) {
-  pedidoStep = n;
-  $$('.step').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById('step-' + n);
-  if (el) el.classList.add('active');
-}
-
-function bindPedido() {
-  const modal = document.getElementById('modal-pedido');
-  if (!modal) return;
-
-  const btnClose = document.getElementById('btn-pedido-close');
-  if (btnClose) btnClose.addEventListener('click', closeModalPedido);
-  modal.addEventListener('click', e => { if (e.target === modal) closeModalPedido(); });
-
-  const selectPagDelivery = document.getElementById('pagamento-delivery');
-  if (selectPagDelivery) {
-    selectPagDelivery.addEventListener('change', (e) => {
-      const group = document.getElementById('troco-group-delivery');
-      if (group) group.style.display = e.target.value === 'Dinheiro' ? 'block' : 'none';
-    });
-  }
-
-  const selectPagRetirada = document.getElementById('pagamento-retirada');
-  if (selectPagRetirada) {
-    selectPagRetirada.addEventListener('change', (e) => {
-      const group = document.getElementById('troco-group-retirada');
-      if (group) group.style.display = e.target.value === 'Dinheiro' ? 'block' : 'none';
-    });
-  }
-
-  $$('.entrega-opcao').forEach(op => {
-    op.addEventListener('click', () => {
-      $$('.entrega-opcao').forEach(o => o.classList.remove('selected'));
-      op.classList.add('selected');
-      tipoEntrega = op.dataset.tipo;
-    });
-  });
-
-  const btnStep1 = document.getElementById('btn-step1-next');
-  if (btnStep1) {
-    btnStep1.addEventListener('click', () => {
-      if (!tipoEntrega) { showToast('⚠️ Selecione como deseja receber.'); return; }
-      
-      const subtotal = cartTotal();
-      if (tipoEntrega === 'delivery' && subtotal < PEDIDO_MINIMO_DELIVERY) {
-        const faltam = PEDIDO_MINIMO_DELIVERY - subtotal;
-        showToast(
-          `🚫 Pedido mínimo: ${fmtBRL(PEDIDO_MINIMO_DELIVERY)}\n` +
-          `Faltam ${fmtBRL(faltam)} para finalizar\n` +
-          `Adicione mais itens ao carrinho`
-        );
-        return;
-      }
-
-      const deliveryFields = document.getElementById('delivery-fields');
-      const retiradaFields = document.getElementById('retirada-fields');
-      if (tipoEntrega === 'delivery') {
-        if (deliveryFields) deliveryFields.style.display = 'block';
-        if (retiradaFields) retiradaFields.style.display = 'none';
-      } else {
-        if (deliveryFields) deliveryFields.style.display = 'none';
-        if (retiradaFields) retiradaFields.style.display = 'block';
-      }
-      showStep(2);
-    });
-  }
-
-  const btnStep2Next = document.getElementById('btn-step2-next');
-  if (btnStep2Next) {
-    btnStep2Next.addEventListener('click', () => {
-      if (!validarFormulario()) return;
-      renderResumo();
-      showStep(3);
-    });
-  }
-
-  const btnStep2Back = document.getElementById('btn-step2-back');
-  if (btnStep2Back) btnStep2Back.addEventListener('click', () => showStep(1));
-
-  const btnStep3Back = document.getElementById('btn-step3-back');
-  if (btnStep3Back) btnStep3Back.addEventListener('click', () => showStep(2));
-
-  const btnWpp = document.getElementById('btn-whatsapp');
-  if (btnWpp) btnWpp.addEventListener('click', enviarWhatsApp);
-}
-
-function validarFormulario() {
-  const isDelivery = tipoEntrega === 'delivery';
-
-  const campos = isDelivery
-    ? ['nome-delivery', 'tel-delivery', 'endereco', 'numero', 'bairro', 'cidade', 'data-delivery', 'hora-delivery']
-    : ['nome-retirada', 'tel-retirada', 'data-retirada', 'hora-retirada'];
-
-  for (const id of campos) {
-    const el = document.getElementById(id);
-    if (!el || !el.value.trim()) {
-      if (el) el.focus();
-      showToast('⚠️ Preencha todos os campos obrigatórios.');
-      return false;
-    }
-  }
-
-  const idPagamento = isDelivery ? 'pagamento-delivery' : 'pagamento-retirada';
-  const selectPagamento = document.getElementById(idPagamento);
-
-  if (!selectPagamento || !selectPagamento.value || selectPagamento.value.trim() === '') {
-    if (selectPagamento) selectPagamento.focus();
-    showToast('⚠️ Selecione a forma de pagamento.');
-    return false;
-  }
-
-  return true;
-}
-
-function renderResumo() {
-  const itens = document.getElementById('resumo-itens');
-  const subtotalVal = document.getElementById('resumo-subtotal-val');
-  const taxaVal = document.getElementById('resumo-taxa-val');
-  const linhaTaxa = document.getElementById('linha-taxa-resumo');
-  const totalVal = document.getElementById('resumo-total-val');
-
-  if (!itens || !totalVal) return;
-
-  itens.innerHTML = STATE.cart.map(i =>
-    `<div class="resumo-item"><span>${i.qty}x ${i.nome}</span><span>${fmtBRL(i.preco * i.qty)}</span></div>`
-  ).join('');
-
-  const subtotal = cartTotal();
-  const taxa = (tipoEntrega === 'delivery') ? TAXA_DELIVERY : 0;
-  const totalCalculado = subtotal + taxa;
-
-  if (subtotalVal) subtotalVal.textContent = fmtBRL(subtotal);
-  if (taxaVal) taxaVal.textContent = (taxa > 0) ? fmtBRL(taxa) : 'Grátis';
-  if (linhaTaxa) linhaTaxa.style.display = (tipoEntrega === 'delivery') ? 'flex' : 'none';
-  if (totalVal) totalVal.textContent = fmtBRL(totalCalculado);
-}
-
-function enviarWhatsApp() {
-  const subtotal = cartTotal();
-
-  if (tipoEntrega === 'delivery' && subtotal < PEDIDO_MINIMO_DELIVERY) {
-    const faltam = PEDIDO_MINIMO_DELIVERY - subtotal;
-    showToast(
-      `🚚 Pedido mínimo para entrega: ${fmtBRL(PEDIDO_MINIMO_DELIVERY)}.\n` +
-      `Faltam ${fmtBRL(faltam)} para finalizar seu pedido.\n` +
-      `Adicione mais itens ao carrinho para continuar.`
-    );
-    return;
-  }
-
-  const cfg = STATE.config;
-  const num = (cfg.whatsapp || DEFAULT_CONFIG.whatsapp).replace(/\D/g, '');
-
-  const itensTexto = STATE.cart.map(i => `• ${i.qty}x ${i.nome} — ${fmtBRL(i.preco * i.qty)}`).join('\n');
-
-  let msg = `*NOVO PEDIDO — BRASEIRO COSTELARIA*\n\n`;
-
-  if (tipoEntrega === 'delivery') {
-    const nome     = document.getElementById('nome-delivery').value.trim();
-    const tel      = document.getElementById('tel-delivery').value.trim();
-    const endereco = document.getElementById('endereco').value.trim();
-    const numero   = document.getElementById('numero').value.trim();
-    const bairro   = document.getElementById('bairro').value.trim();
-    const compl    = document.getElementById('complemento').value.trim();
-    const cidade   = document.getElementById('cidade').value.trim();
-    
-    const rawData  = document.getElementById('data-delivery').value;
-    const data     = formatarDataBR(rawData);
-
-    const hora     = document.getElementById('hora-delivery').value;
-    const formaPag = document.getElementById('pagamento-delivery').value;
-    const troco    = document.getElementById('troco-delivery').value.trim();
-    const obs      = document.getElementById('obs-delivery').value.trim();
-
-    const totalComTaxa = subtotal + TAXA_DELIVERY;
-
-    msg += `*Cliente:* ${nome}\n`;
-    msg += `*Telefone:* ${tel}\n`;
-    msg += `*Forma de recebimento:* Delivery\n\n`;
-    msg += `*Produtos:*\n${itensTexto}\n\n`;
-    msg += `*Subtotal:* ${fmtBRL(subtotal)}\n`;
-    msg += `*Taxa de Entrega:* ${fmtBRL(TAXA_DELIVERY)}\n`;
-    msg += `*Total Final:* ${fmtBRL(totalComTaxa)}\n\n`;
-    msg += `*Forma de Pagamento:* ${formaPag}`;
-    if (formaPag === 'Dinheiro' && troco) {
-      msg += ` (Troco para ${troco})`;
-    }
-    msg += `\n\n*Endereco de entrega:*\n`;
-    msg += `${endereco}, ${numero}${compl ? ' — ' + compl : ''}\n`;
-    msg += `${bairro} — ${cidade}\n\n`;
-    msg += `*Data:* ${data}\n`;
-    msg += `*Horario:* ${hora}\n`;
-    if (obs) msg += `\n*Observacoes:* ${obs}\n`;
-  } else {
-    const nome     = document.getElementById('nome-retirada').value.trim();
-    const tel      = document.getElementById('tel-retirada').value.trim();
-    
-    const rawData  = document.getElementById('data-retirada').value;
-    const data     = formatarDataBR(rawData);
-
-    const hora     = document.getElementById('hora-retirada').value;
-    const formaPag = document.getElementById('pagamento-retirada').value;
-    const troco    = document.getElementById('troco-retirada').value.trim();
-    const obs      = document.getElementById('obs-retirada').value.trim();
-
-    msg += `*Cliente:* ${nome}\n`;
-    msg += `*Telefone:* ${tel}\n`;
-    msg += `*Forma de recebimento:* Retirada no estabelecimento\n\n`;
-    msg += `*Produtos:*\n${itensTexto}\n\n`;
-    msg += `*Total Final:* ${fmtBRL(subtotal)}\n\n`;
-    msg += `*Forma de Pagamento:* ${formaPag}`;
-    if (formaPag === 'Dinheiro' && troco) {
-      msg += ` (Troco para ${troco})`;
-    }
-    msg += `\n\n*Data:* ${data}\n`;
-    msg += `*Horario:* ${hora}\n`;
-    if (obs) msg += `\n*Observacoes:* ${obs}\n`;
-  }
-
-  msg += `\n_Obrigado pela preferencia!_`;
-
-  const url = `https://api.whatsapp.com/send?phone=${num}&text=${encodeURIComponent(msg)}`;
-  window.open(url, '_blank');
-
-  closeModalPedido();
-  clearCart();
-  showToast('Pedido enviado com sucesso!');
-}
-
-/* ── Service Worker ────────────────────────────────────────── */
-function registerSW() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js')
-      .catch(err => console.warn('SW não registrado:', err));
-  }
-}
+  const existing = STATE.cart.find(x => x.id ===
