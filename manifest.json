@@ -2,8 +2,8 @@
   "name": "Braseiro Costelaria",
   "short_name": "Braseiro",
   "description": "Cardápio digital da Braseiro Costelaria — Costela assada no bafo.",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/braseirocostelaria/",
+  "scope": "/braseirocostelaria/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#0d0d0d",
@@ -74,7 +74,7 @@
       "name": "Ver Cardápio",
       "short_name": "Cardápio",
       "description": "Abrir o cardápio da Braseiro Costelaria",
-      "url": "./#cardapio",
+      "url": "/braseirocostelaria/#cardapio",
       "icons": [{ "src": "assets/icons/icon-96.png", "sizes": "96x96" }]
     }
   ]
