@@ -3,20 +3,20 @@
    Estratégia: Cache First para assets, Network First para HTML
    ============================================================ */
 
-const CACHE_VERSION = 'v1.0.2';
+const CACHE_VERSION = 'v1.0.3';
 const CACHE_STATIC  = `braseiro-static-${CACHE_VERSION}`;
 const CACHE_DYNAMIC = `braseiro-dynamic-${CACHE_VERSION}`;
 
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/app.js',
-  '/js/admin.js',
-  '/manifest.json',
-  '/assets/icons/icon-192.png',
-  '/assets/icons/icon-512.png',
-  '/assets/logo/logo.png'
+  './',
+  './index.html',
+  './css/style.css',
+  './js/app.js',
+  './js/admin.js',
+  './manifest.json',
+  './assets/icons/icon-192.png',
+  './assets/icons/icon-512.png',
+  './assets/logo/logo.png'
 ];
 
 /* ── Install ───────────────────────────────────────────────── */
@@ -76,7 +76,7 @@ async function cacheFirst(request) {
     }
     return response;
   } catch (error) {
-    return caches.match('/index.html');
+    return caches.match('./index.html');
   }
 }
 
@@ -90,6 +90,6 @@ async function networkFirst(request) {
     return response;
   } catch (error) {
     const cached = await caches.match(request);
-    return cached || caches.match('/index.html');
+    return cached || caches.match('./index.html');
   }
 }
