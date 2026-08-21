@@ -42,6 +42,64 @@ function decryptData(encryptedData, key = 'braseiro_secure_2024') {
 const TAXA_DELIVERY = 5.00;
 const PEDIDO_MINIMO_DELIVERY = 50.00;
 
+/* ── Produtos Padrão (fallback) ────────────────────────────── */
+const DEFAULT_PRODUTOS = [
+  {
+    id: 'p1',
+    nome: 'Costela Bovina Inteira',
+    preco: 79.90,
+    categoria: 'costelas',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Costela assada no bafo por 12 horas, suculenta e macia.'
+  },
+  {
+    id: 'p2',
+    nome: 'Costela de Porco Especial',
+    preco: 69.90,
+    categoria: 'costelas',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Costela suína com tempero artesanal.'
+  },
+  {
+    id: 'p3',
+    nome: 'Arroz com Pimenta',
+    preco: 12.90,
+    categoria: 'acompanhamentos',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Arroz temperado com pimenta e ervas.'
+  },
+  {
+    id: 'p4',
+    nome: 'Vinagrete Caseiro',
+    preco: 8.90,
+    categoria: 'acompanhamentos',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Vinagrete fresco com tomate, cebola e cheiro-verde.'
+  },
+  {
+    id: 'p5',
+    nome: 'Refrigerante 2L',
+    preco: 10.00,
+    categoria: 'bebidas',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Refrigerante gelado.'
+  },
+  {
+    id: 'p6',
+    nome: 'Combo Costela + Acompanhamento',
+    preco: 99.90,
+    categoria: 'combos',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Costela + 2 acompanhamentos + bebida.'
+  }
+];
+
 /* ── Estado Global ─────────────────────────────────────────── */
 const STATE = {
   cart: [],          // { id, nome, preco, img, qty }
@@ -129,32 +187,46 @@ function migrarOrdenacaoProdutos(produtos) {
 
 /* ── Init ──────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-  STATE.config = loadLS('config', DEFAULT_CONFIG);
-  
-  const produtosLS = loadLS('produtos', null);
-  if (produtosLS === null) {
-    STATE.produtos = DEFAULT_PRODUTOS;
-    saveLS('produtos', DEFAULT_PRODUTOS);
-  } else {
-    STATE.produtos = produtosLS;
-  }
+  try {
+    STATE.config = loadLS('config', DEFAULT_CONFIG);
+    
+    const produtosLS = loadLS('produtos', null);
+    if (produtosLS === null) {
+      STATE.produtos = DEFAULT_PRODUTOS;
+      saveLS('produtos', DEFAULT_PRODUTOS);
+    } else {
+      STATE.produtos = produtosLS;
+    }
 
-  applyConfig();
-  renderProdutos();
-  bindNav();
-  bindCart();
-  bindModalImg();
-  bindPedido();
-  
-  initFirebaseListeners();
+    applyConfig();
+    renderProdutos();
+    bindNav();
+    bindCart();
+    bindModalImg();
+    bindPedido();
+    
+    initFirebaseListeners();
 
-  if (typeof bindAdmin === 'function') bindAdmin();
-  if (typeof bindAdminLogin === 'function') bindAdminLogin();
-  registerSW();
+    if (typeof bindAdmin === 'function') bindAdmin();
+    if (typeof bindAdminLogin === 'function') bindAdminLogin();
+    registerSW();
 
-  const ano = document.getElementById("ano");
-  if (ano) {
-    ano.textContent = new Date().getFullYear();
+    const ano = document.getElementById("ano");
+    if (ano) {
+      ano.textContent = new Date().getFullYear();
+    }
+  } catch (error) {
+    console.error('Erro crítico na inicialização:', error);
+    const grid = document.getElementById('produtos-grid');
+    if (grid) {
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--vermelho-vivo);">
+          <h2>⚠️ Ocorreu um erro ao carregar o cardápio.</h2>
+          <p style="color:var(--texto-muted);">Tente recarregar a página. Se o problema persistir, entre em contato.</p>
+          <p style="font-size:0.8rem;color:var(--texto-muted);">Detalhes: ${error.message}</p>
+        </div>
+      `;
+    }
   }
 });
 
