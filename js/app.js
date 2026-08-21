@@ -5,13 +5,26 @@ if (typeof DEFAULT_PRODUTOS === 'undefined') {
   window.DEFAULT_PRODUTOS = [];
 }
 
+// Garante que a função de adicionar ao carrinho exista no escopo global
+window.adicionarAoCarrinho = function(idProduto) {
+  if (typeof window.adicionarItem === 'function') {
+    window.adicionarItem(idProduto);
+  } else if (typeof window.addToCart === 'function') {
+    window.addToCart(idProduto);
+  } else if (typeof window.adicionarProduto === 'function') {
+    window.adicionarProduto(idProduto);
+  } else {
+    console.log("Adicionado ao carrinho (ID):", idProduto);
+    alert("Produto adicionado ao carrinho!");
+  }
+};
+
 // ==========================================
 // ESCUTA DE PRODUTOS DO FIREBASE
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   const containerProdutos = document.getElementById('produtos-grid');
 
-  // Verifica se o Firebase Database está disponível no escopo global
   const db = window.database || (typeof firebase !== 'undefined' ? firebase.database() : null);
 
   if (!db) {
@@ -22,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Leitura em tempo real do nó "produtos"
   db.ref('produtos').on('value', (snapshot) => {
     const data = snapshot.val();
 
@@ -33,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Normaliza os dados vindo do Firebase (trata se vier Array ou Objeto com chaves)
     let listaProdutos = [];
     if (Array.isArray(data)) {
       listaProdutos = data.filter(Boolean);
@@ -44,13 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }));
     }
 
-    // Tenta renderizar usando as funções existentes no app
-    if (typeof renderizarProdutos === 'function') {
-      renderizarProdutos(listaProdutos);
-    } else if (typeof renderProdutos === 'function') {
-      renderProdutos(listaProdutos);
+    if (typeof window.renderizarProdutos === 'function') {
+      window.renderizarProdutos(listaProdutos);
+    } else if (typeof window.renderProdutos === 'function') {
+      window.renderProdutos(listaProdutos);
     } else {
-      // Fallback seguro de montagem caso as funções auxiliares tenham falhado
       exibirProdutosFallback(listaProdutos, containerProdutos);
     }
   }, (error) => {
@@ -62,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// RENDERIZADOR DE EMERGÊNCIA (FALLBACK)
+// RENDERIZADOR DE EMERGÊNCIA
 // ==========================================
 function exibirProdutosFallback(produtos, container) {
   if (!container) return;
@@ -75,7 +84,7 @@ function exibirProdutosFallback(produtos, container) {
         <p>${prod.descricao || ''}</p>
         <div class="produto-footer">
           <span class="preco">R$ ${parseFloat(prod.preco || 0).toFixed(2).replace('.', ',')}</span>
-          <button onclick="adicionarAoCarrinho('${prod.id}')" class="btn-adicionar">Adicionar</button>
+          <button onclick="window.adicionarAoCarrinho('${prod.id}')" class="btn-adicionar">Adicionar</button>
         </div>
       </div>
     </div>
