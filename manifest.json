@@ -2,8 +2,8 @@
   "name": "Braseiro Costelaria",
   "short_name": "Braseiro",
   "description": "Cardápio digital da Braseiro Costelaria — Costela assada no bafo.",
-  "start_url": "/braseirocostelaria/",
-  "scope": "/braseirocostelaria/",
+  "start_url": ".",
+  "scope": ".",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#0d0d0d",
@@ -12,49 +12,49 @@
   "categories": ["food", "shopping"],
   "icons": [
     {
-      "src": "/braseirocostelaria/assets/icons/icon-72.png",
+      "src": "assets/icons/icon-72.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/braseirocostelaria/assets/icons/icon-96.png",
+      "src": "assets/icons/icon-96.png",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/braseirocostelaria/assets/icons/icon-128.png",
+      "src": "assets/icons/icon-128.png",
       "sizes": "128x128",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/braseirocostelaria/assets/icons/icon-144.png",
+      "src": "assets/icons/icon-144.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/braseirocostelaria/assets/icons/icon-152.png",
+      "src": "assets/icons/icon-152.png",
       "sizes": "152x152",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/braseirocostelaria/assets/icons/icon-192.png",
+      "src": "assets/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/braseirocostelaria/assets/icons/icon-384.png",
+      "src": "assets/icons/icon-384.png",
       "sizes": "384x384",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/braseirocostelaria/assets/icons/icon-512.png",
+      "src": "assets/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -62,7 +62,7 @@
   ],
   "screenshots": [
     {
-      "src": "/braseirocostelaria/assets/logo/og-image.jpg",
+      "src": "assets/logo/og-image.jpg",
       "sizes": "1200x630",
       "type": "image/jpeg",
       "form_factor": "wide",
@@ -74,8 +74,8 @@
       "name": "Ver Cardápio",
       "short_name": "Cardápio",
       "description": "Abrir o cardápio da Braseiro Costelaria",
-      "url": "/braseirocostelaria/#cardapio",
-      "icons": [{ "src": "/braseirocostelaria/assets/icons/icon-96.png", "sizes": "96x96" }]
+      "url": "#cardapio",
+      "icons": [{ "src": "assets/icons/icon-96.png", "sizes": "96x96" }]
     }
   ]
 }
