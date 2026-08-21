@@ -56,7 +56,7 @@ const DEFAULT_CONFIG = {
   heroTitle: 'Braseiro Costelaria',
   heroSubtitle: 'Costela assada no bafo.',
   heroBadge1: '🥩 Costelas artesanais.',
-  heroBadge2: '📅 Encomendas para sexta, sábado, domingo e feriados.',
+  heroBadge2: '📅 Encomendas para sábado, domingo e feriados.',
   heroBadge3: '⏳ Produção artesanal.'
 };
 
