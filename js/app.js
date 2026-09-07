@@ -102,10 +102,10 @@ const DEFAULT_PRODUTOS = [
 
 /* ── Estado Global ─────────────────────────────────────────── */
 const STATE = {
-  cart: [],          // { id, nome, preco, img, qty }
-  produtos: [],      // carregados do Firebase / localStorage / defaults
-  config: {},        // whatsapp, textos, etc.
-  modalProduto: null // produto aberto no modal
+  cart: [],
+  produtos: [],
+  config: {},
+  modalProduto: null
 };
 
 /* ── Configuração padrão ───────────────────────────────────── */
@@ -136,8 +136,10 @@ function saveLS(key, val) {
     localStorage.setItem('braseiro_' + key, encrypted);
   } catch(e) {
     console.warn('Erro ao salvar no LocalStorage:', e);
+    showToast('⚠️ Falha ao salvar dados. O armazenamento pode estar cheio.');
   }
 }
+
 function loadLS(key, def) {
   try { 
     const v = localStorage.getItem('braseiro_' + key); 
@@ -147,6 +149,17 @@ function loadLS(key, def) {
   } catch { 
     return def; 
   }
+}
+
+/* ── Sanitização ────────────────────────────────────────────── */
+function escapeHtml(unsafe) {
+  if (!unsafe) return '';
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 /* ── Toast ─────────────────────────────────────────────────── */
@@ -223,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--vermelho-vivo);">
           <h2>⚠️ Ocorreu um erro ao carregar o cardápio.</h2>
           <p style="color:var(--texto-muted);">Tente recarregar a página. Se o problema persistir, entre em contato.</p>
-          <p style="font-size:0.8rem;color:var(--texto-muted);">Detalhes: ${error.message}</p>
+          <p style="font-size:0.8rem;color:var(--texto-muted);">Detalhes: ${escapeHtml(error.message)}</p>
         </div>
       `;
     }
@@ -235,32 +248,46 @@ function initFirebaseListeners() {
   if (typeof database === 'undefined') return;
 
   database.ref('produtos').on('value', snapshot => {
-    const prodsVal = snapshot.val();
-    if (prodsVal) {
-      STATE.produtos = Array.isArray(prodsVal) ? prodsVal : Object.values(prodsVal);
-      saveLS('produtos', STATE.produtos);
-    } else {
-      database.ref('produtos').set(DEFAULT_PRODUTOS);
-      STATE.produtos = DEFAULT_PRODUTOS;
-      saveLS('produtos', DEFAULT_PRODUTOS);
+    try {
+      const prodsVal = snapshot.val();
+      if (prodsVal) {
+        STATE.produtos = Array.isArray(prodsVal) ? prodsVal : Object.values(prodsVal);
+        saveLS('produtos', STATE.produtos);
+      } else {
+        database.ref('produtos').set(DEFAULT_PRODUTOS);
+        STATE.produtos = DEFAULT_PRODUTOS;
+        saveLS('produtos', DEFAULT_PRODUTOS);
+      }
+      const activeFilterBtn = $('.filter-btn.active');
+      const filtroAtual = activeFilterBtn ? activeFilterBtn.dataset.filter : 'todos';
+      renderProdutos(filtroAtual);
+    } catch (err) {
+      console.error('Erro ao processar produtos do Firebase:', err);
+      showToast('⚠️ Erro ao carregar produtos. Usando dados locais.');
     }
-    const activeFilterBtn = $('.filter-btn.active');
-    const filtroAtual = activeFilterBtn ? activeFilterBtn.dataset.filter : 'todos';
-    renderProdutos(filtroAtual);
-  }, err => console.warn('Erro ao escutar produtos no Firebase:', err));
+  }, err => {
+    console.warn('Erro ao escutar produtos no Firebase:', err);
+    showToast('⚠️ Falha na conexão com o servidor. Dados locais carregados.');
+  });
 
   database.ref('config').on('value', snapshot => {
-    const cfgVal = snapshot.val();
-    if (cfgVal) {
-      STATE.config = { ...DEFAULT_CONFIG, ...cfgVal };
-      saveLS('config', STATE.config);
-    } else {
-      database.ref('config').set(DEFAULT_CONFIG);
-      STATE.config = DEFAULT_CONFIG;
-      saveLS('config', DEFAULT_CONFIG);
+    try {
+      const cfgVal = snapshot.val();
+      if (cfgVal) {
+        STATE.config = { ...DEFAULT_CONFIG, ...cfgVal };
+        saveLS('config', STATE.config);
+      } else {
+        database.ref('config').set(DEFAULT_CONFIG);
+        STATE.config = DEFAULT_CONFIG;
+        saveLS('config', DEFAULT_CONFIG);
+      }
+      applyConfig();
+    } catch (err) {
+      console.error('Erro ao processar configurações do Firebase:', err);
     }
-    applyConfig();
-  }, err => console.warn('Erro ao escutar configurações no Firebase:', err));
+  }, err => {
+    console.warn('Erro ao escutar configurações no Firebase:', err);
+  });
 }
 
 /* ── Aplicar configurações ─────────────────────────────────── */
@@ -311,15 +338,19 @@ function renderProdutos(filtro = 'todos') {
     card.className = 'produto-card';
     card.style.animationDelay = (i * 0.06) + 's';
     card.dataset.id = p.id;
+    
+    const nomeSeguro = escapeHtml(p.nome);
+    const descSegura = p.descricao ? escapeHtml(p.descricao) : '';
+    
     card.innerHTML = `
-      <div class="produto-img-wrap" data-id="${p.id}" role="button" tabindex="0" aria-label="Ampliar imagem de ${p.nome}">
-        <img src="${p.img}" alt="${p.nome}" loading="lazy" onerror="this.src='assets/produtos/placeholder.jpg'">
+      <div class="produto-img-wrap" data-id="${p.id}" role="button" tabindex="0" aria-label="Ampliar imagem de ${nomeSeguro}">
+        <img src="${p.img}" alt="${nomeSeguro}" loading="lazy" onerror="this.src='assets/produtos/placeholder.jpg'">
         <div class="produto-img-overlay"><span>🔍 Ampliar</span></div>
       </div>
       <div class="produto-info">
-        <div class="produto-nome">${p.nome}</div>
+        <div class="produto-nome">${nomeSeguro}</div>
         <div class="produto-preco">${fmtBRL(p.preco)}</div>
-        ${p.descricao ? `<div class="produto-desc">${p.descricao}</div>` : ''}
+        ${descSegura ? `<div class="produto-desc">${descSegura}</div>` : ''}
         <button class="btn-add" data-id="${p.id}">Adicionar ao Pedido</button>
       </div>`;
     grid.appendChild(card);
@@ -360,6 +391,17 @@ function bindNav() {
       }
     });
   }
+
+  // Menu hambúrguer
+  const menuToggle = document.getElementById('menu-toggle');
+  const navLinks = document.getElementById('nav-links');
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', isOpen);
+      menuToggle.textContent = isOpen ? '✕' : '☰';
+    });
+  }
 }
 
 /* ── Modal Imagem ──────────────────────────────────────────── */
@@ -372,7 +414,7 @@ function openModalImg(id) {
   if (!modal) return;
   
   $('#modal-img-img').src = p.img;
-  $('#modal-img-img').alt = p.nome;
+  $('#modal-img-img').alt = escapeHtml(p.nome);
   $('#modal-img-nome').textContent = p.nome;
   $('#modal-img-preco').textContent = fmtBRL(p.preco);
   modal.classList.add('open');
@@ -412,7 +454,8 @@ function addToCart(id) {
   const p = STATE.produtos.find(x => x.id === id);
   if (!p) return;
   
-  if (typeof p.preco !== 'number' || p.preco < 0 || p.preco > 99999) {
+  const preco = parseFloat(p.preco) || 0;
+  if (preco <= 0 || preco > 99999) {
     showToast('⚠️ Produto inválido.');
     return;
   }
@@ -421,7 +464,7 @@ function addToCart(id) {
   if (existing) { 
     existing.qty++; 
   } else { 
-    STATE.cart.push({ id: p.id, nome: p.nome, preco: p.preco, img: p.img, qty: 1 }); 
+    STATE.cart.push({ id: p.id, nome: p.nome, preco: preco, img: p.img, qty: 1 }); 
   }
   updateCartUI();
   showToast(`✅ ${p.nome} adicionado!`);
@@ -449,7 +492,7 @@ function clearCart() {
 
 function cartTotal() { 
   return STATE.cart.reduce((s, i) => {
-    const preco = typeof i.preco === 'number' ? i.preco : 0;
+    const preco = typeof i.preco === 'number' ? i.preco : parseFloat(i.preco) || 0;
     const qty = typeof i.qty === 'number' ? i.qty : 0;
     return s + preco * qty;
   }, 0); 
@@ -509,11 +552,13 @@ function renderCartItems() {
     infoMinimo.textContent = `✅ Pedido mínimo atingido!`;
   }
 
-  container.innerHTML = STATE.cart.map(item => `
+  container.innerHTML = STATE.cart.map(item => {
+    const nomeSeguro = escapeHtml(item.nome);
+    return `
     <div class="cart-item" data-id="${item.id}">
-      <img class="cart-item-img" src="${item.img}" alt="${item.nome}" onerror="this.src='assets/produtos/placeholder.jpg'">
+      <img class="cart-item-img" src="${item.img}" alt="${nomeSeguro}" onerror="this.src='assets/produtos/placeholder.jpg'">
       <div class="cart-item-info">
-        <div class="cart-item-nome">${item.nome}</div>
+        <div class="cart-item-nome">${nomeSeguro}</div>
         <div class="cart-item-preco">${fmtBRL(item.preco)}</div>
         <div class="cart-item-controls">
           <button class="btn-qty" data-id="${item.id}" data-delta="-1" aria-label="Diminuir">−</button>
@@ -522,7 +567,8 @@ function renderCartItems() {
         </div>
       </div>
       <button class="btn-remove-item" data-id="${item.id}" aria-label="Remover">✕ Remover</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   $$('.btn-qty').forEach(btn => {
     btn.addEventListener('click', () => changeQty(btn.dataset.id, parseInt(btn.dataset.delta)));
@@ -605,6 +651,35 @@ function showStep(n) {
   if (el) el.classList.add('active');
 }
 
+/* ── Validação do Formulário (CORRIGIDA) ──────────────────── */
+function validarFormulario() {
+  const isDelivery = tipoEntrega === 'delivery';
+
+  const campos = isDelivery
+    ? ['nome-delivery', 'tel-delivery', 'endereco', 'numero', 'bairro', 'data-delivery']
+    : ['nome-retirada', 'tel-retirada', 'data-retirada'];
+
+  for (const id of campos) {
+    const el = document.getElementById(id);
+    if (!el || !el.value.trim()) {
+      if (el) el.focus();
+      showToast('⚠️ Preencha todos os campos obrigatórios.');
+      return false;
+    }
+  }
+
+  const idPagamento = isDelivery ? 'pagamento-delivery' : 'pagamento-retirada';
+  const selectPagamento = document.getElementById(idPagamento);
+
+  if (!selectPagamento || !selectPagamento.value || selectPagamento.value.trim() === '') {
+    if (selectPagamento) selectPagamento.focus();
+    showToast('⚠️ Selecione a forma de pagamento.');
+    return false;
+  }
+
+  return true;
+}
+
 function bindPedido() {
   const modal = document.getElementById('modal-pedido');
   if (!modal) return;
@@ -685,34 +760,6 @@ function bindPedido() {
   if (btnWpp) btnWpp.addEventListener('click', enviarWhatsApp);
 }
 
-function validarFormulario() {
-  const isDelivery = tipoEntrega === 'delivery';
-
-  const campos = isDelivery
-    ? ['nome-delivery', 'tel-delivery', 'endereco', 'numero', 'bairro', 'data-delivery']
-    : ['nome-retirada', 'tel-retirada', 'data-retirada'];
-
-  for (const id of campos) {
-    const el = document.getElementById(id);
-    if (!el || !el.value.trim()) {
-      if (el) el.focus();
-      showToast('⚠️ Preencha todos os campos obrigatórios.');
-      return false;
-    }
-  }
-
-  const idPagamento = isDelivery ? 'pagamento-delivery' : 'pagamento-retirada';
-  const selectPagamento = document.getElementById(idPagamento);
-
-  if (!selectPagamento || !selectPagamento.value || selectPagamento.value.trim() === '') {
-    if (selectPagamento) selectPagamento.focus();
-    showToast('⚠️ Selecione a forma de pagamento.');
-    return false;
-  }
-
-  return true;
-}
-
 function renderResumo() {
   const itens = document.getElementById('resumo-itens');
   const subtotalVal = document.getElementById('resumo-subtotal-val');
@@ -722,9 +769,10 @@ function renderResumo() {
 
   if (!itens || !totalVal) return;
 
-  itens.innerHTML = STATE.cart.map(i =>
-    `<div class="resumo-item"><span>${i.qty}x ${i.nome}</span><span>${fmtBRL(i.preco * i.qty)}</span></div>`
-  ).join('');
+  itens.innerHTML = STATE.cart.map(i => {
+    const nomeSeguro = escapeHtml(i.nome);
+    return `<div class="resumo-item"><span>${i.qty}x ${nomeSeguro}</span><span>${fmtBRL(i.preco * i.qty)}</span></div>`;
+  }).join('');
 
   const subtotal = cartTotal();
   const taxa = (tipoEntrega === 'delivery') ? TAXA_DELIVERY : 0;
@@ -765,6 +813,7 @@ function enviarWhatsApp() {
     const compl    = document.getElementById('complemento').value.trim();
     
     const data = document.getElementById('data-delivery').value.trim();
+    const dataFormatada = formatarDataBR(data);
     const formaPag = document.getElementById('pagamento-delivery').value;
     const troco    = document.getElementById('troco-delivery').value.trim();
     const obs      = document.getElementById('obs-delivery').value.trim();
@@ -785,13 +834,14 @@ function enviarWhatsApp() {
     msg += `\n\n*Endereco de entrega:*\n`;
     msg += `${endereco}, ${numero}${compl ? ' — ' + compl : ''}\n`;
     msg += `${bairro}\n\n`;
-    msg += `*Data:* ${data}\n`;
+    msg += `*Data:* ${dataFormatada}\n`;
     if (obs) msg += `\n*Observacoes:* ${obs}\n`;
   } else {
     const nome     = document.getElementById('nome-retirada').value.trim();
     const tel      = document.getElementById('tel-retirada').value.trim();
     
     const data = document.getElementById('data-retirada').value.trim();
+    const dataFormatada = formatarDataBR(data);
 
     const formaPag = document.getElementById('pagamento-retirada').value;
     const troco    = document.getElementById('troco-retirada').value.trim();
@@ -806,7 +856,7 @@ function enviarWhatsApp() {
     if (formaPag === 'Dinheiro' && troco) {
       msg += ` (Troco para ${troco})`;
     }
-    msg += `\n\n*Data:* ${data}\n`;
+    msg += `\n\n*Data:* ${dataFormatada}\n`;
     if (obs) msg += `\n*Observacoes:* ${obs}\n`;
   }
 
@@ -827,3 +877,19 @@ function registerSW() {
       .catch(err => console.warn('SW não registrado:', err));
   }
 }
+
+/* ── Expor funções globais ─────────────────────────────────── */
+window.addToCart = addToCart;
+window.removeFromCart = removeFromCart;
+window.changeQty = changeQty;
+window.clearCart = clearCart;
+window.cartTotal = cartTotal;
+window.cartCount = cartCount;
+window.renderProdutos = renderProdutos;
+window.applyConfig = applyConfig;
+window.openModalImg = openModalImg;
+window.closeModalImg = closeModalImg;
+window.openModalPedido = openModalPedido;
+window.closeModalPedido = closeModalPedido;
+window.validarFormulario = validarFormulario;
+window.enviarWhatsApp = enviarWhatsApp;
