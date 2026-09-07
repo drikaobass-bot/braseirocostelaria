@@ -37,7 +37,7 @@
   <link rel="shortcut icon" href="assets/icons/favicon.ico">
 
   <title>Braseiro Costelaria — Cardápio Digital</title>
-  <link rel="stylesheet" href="css/style.css?v=9">
+  <link rel="stylesheet" href="css/style.css?v=10">
 </head>
 <body>
 
@@ -50,7 +50,8 @@
         <span>Costelaria</span>
       </div>
     </a>
-    <div class="nav-links">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    <div class="nav-links" id="nav-links">
       <a href="#cardapio">Cardápio</a>
       <a href="#sobre">Sobre</a>
       <a href="#" id="btn-admin-nav" aria-label="Painel Administrativo">Admin</a>
@@ -245,7 +246,7 @@
 
           <div class="form-group">
             <label for="data-delivery">Data *</label>
-            <input type="text" id="data-delivery" placeholder="Ex: 07/09/2026">
+            <input type="date" id="data-delivery" min="2026-01-01">
           </div>
 
           <div class="form-group">
@@ -283,7 +284,7 @@
           
           <div class="form-group">
             <label for="data-retirada">Data *</label>
-            <input type="text" id="data-retirada" placeholder="Ex: 07/09/2026">
+            <input type="date" id="data-retirada" min="2026-01-01">
           </div>
 
           <div class="form-group">
@@ -506,7 +507,7 @@
   window.database = firebase.database();
 </script>
 
-<script src="js/app.js?v=9"></script>
-<script src="js/admin.js?v=9"></script>
+<script src="js/app.js?v=10"></script>
+<script src="js/admin.js?v=10"></script>
 </body>
 </html>
