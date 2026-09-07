@@ -3,7 +3,7 @@
    Estratégia: Cache First para assets, Network First para HTML
    ============================================================ */
 
-const CACHE_VERSION = 'v4.0.0';
+const CACHE_VERSION = 'v5.0.0';
 const CACHE_STATIC  = `braseiro-static-${CACHE_VERSION}`;
 const CACHE_DYNAMIC = `braseiro-dynamic-${CACHE_VERSION}`;
 
