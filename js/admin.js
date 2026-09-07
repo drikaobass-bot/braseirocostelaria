@@ -83,6 +83,18 @@ function uid() {
   return 'p' + Date.now() + Math.random().toString(36).slice(2, 6); 
 }
 
+function escapeHtml(unsafe) {
+  if (!unsafe) return '';
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function $$(sel, ctx = document) { return [...ctx.querySelectorAll(sel)]; }
+
 /* ── Integração Firebase Helper Functions ─────────────────── */
 function syncProdutosToFirebase(produtos) {
   if (typeof database !== 'undefined') {
@@ -150,7 +162,6 @@ function bindAdminLogin() {
 
       error.textContent = 'Autenticando...';
 
-      // 🔐 FIREBASE AUTHENTICATION - SOMENTE ISSO (SEM SENHA FIXA)
       firebase.auth().signInWithEmailAndPassword('drikao.bass@gmail.com', senha)
         .then(() => {
           adminLogado = true;
@@ -346,25 +357,29 @@ function renderAdminProdutos() {
     html += `<div style="margin-bottom: 30px; border-bottom: 2px solid var(--grafite-3); padding-bottom: 15px;">`;
     html += `<h4 style="color: var(--dourado); margin-bottom: 15px;">${displayName}</h4>`;
     
-    html += itens.map(p => `
+    html += itens.map(p => {
+      const nomeSeguro = escapeHtml(p.nome);
+      const statusClass = p.ativo ? 'ativo' : 'inativo';
+      const statusText = p.ativo ? '● Ativo' : '● Inativo';
+      return `
       <div class="produto-admin-item" data-id="${p.id}">
         <div class="produto-admin-ordem" style="display:flex; flex-direction:column; gap:4px; margin-right:12px;">
           <button class="btn-admin-ordem-up" data-id="${p.id}" data-categoria="${catKey}" title="Mover para cima">⬆</button>
           <span style="font-size:0.75rem; color: var(--texto-muted); text-align:center;">${p.ordem || '0'}</span>
           <button class="btn-admin-ordem-down" data-id="${p.id}" data-categoria="${catKey}" title="Mover para baixo">⬇</button>
         </div>
-        <img class="produto-admin-img" src="${p.img}" alt="${p.nome}" onerror="this.src='assets/produtos/placeholder.jpg'">
+        <img class="produto-admin-img" src="${p.img}" alt="${nomeSeguro}" onerror="this.src='assets/produtos/placeholder.jpg'">
         <div class="produto-admin-info">
-          <div class="produto-admin-nome">${p.nome}</div>
+          <div class="produto-admin-nome">${nomeSeguro}</div>
           <div class="produto-admin-preco">${fmtBRL(p.preco)}</div>
-          <div class="produto-admin-status ${p.ativo ? 'ativo' : 'inativo'}">${p.ativo ? '● Ativo' : '● Inativo'}</div>
+          <div class="produto-admin-status ${statusClass}">${statusText}</div>
         </div>
         <div class="produto-admin-actions">
           <button class="btn-admin-secondary btn-editar-produto" data-id="${p.id}">Editar</button>
           <button class="btn-admin-danger btn-excluir-produto" data-id="${p.id}">Excluir</button>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
     
     html += `</div>`;
   });
@@ -529,38 +544,31 @@ function salvarProduto() {
   renderAdminProdutos();
 }
 
-/* ── Lógica de Ordenação DEFINITIVA (com SPLICE) ──────────── */
+/* ── Lógica de Ordenação DEFINITIVA ────────────────────────── */
 function alterarOrdem(id, categoria, direcao) {
   let lista = loadLS('produtos', []);
   
-  // 1. Filtra apenas os itens da categoria e ordena por ordem atual
   let itensCategoria = lista
     .filter(p => p.categoria === categoria)
     .sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
 
-  // 2. Encontra o índice do item a ser movido
   const indexAtual = itensCategoria.findIndex(p => p.id === id);
   if (indexAtual === -1) return;
 
-  // 3. Calcula o novo índice
   const novoIndex = indexAtual + direcao;
   
-  // 4. Verifica se o movimento é válido (não ultrapassa os limites)
   if (novoIndex < 0 || novoIndex >= itensCategoria.length) {
     showToast('⚠️ Já está no limite da lista.');
     return;
   }
 
-  // 5. Remove o item da posição atual e insere na nova posição (uso seguro de SPLICE)
   const [itemRemovido] = itensCategoria.splice(indexAtual, 1);
   itensCategoria.splice(novoIndex, 0, itemRemovido);
 
-  // 6. Recalcula a ordem sequencial (10, 20, 30...)
   itensCategoria.forEach((p, i) => {
     p.ordem = (i + 1) * 10;
   });
 
-  // 7. Atualiza a lista principal
   itensCategoria.forEach(p => {
     const idxMain = lista.findIndex(x => x.id === p.id);
     if (idxMain !== -1) {
@@ -568,12 +576,10 @@ function alterarOrdem(id, categoria, direcao) {
     }
   });
 
-  // 8. Persiste as alterações
   saveLS('produtos', lista);
   syncProdutosToFirebase(lista);
   renderAdminProdutos();
   
-  // 9. Atualiza o cardápio em tempo real
   if (typeof STATE !== 'undefined' && typeof renderProdutos === 'function') {
     STATE.produtos = lista;
     const activeFilterBtn = document.querySelector('.filter-btn.active');
@@ -592,4 +598,5 @@ window.bindAdmin          = bindAdmin;
 window.openAdmin          = openAdmin;
 window.closeAdmin         = closeAdmin;
 window.fecharModalProduto = fecharModalProduto;
-window.$$                 = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+window.$$                 = $$;
+window.escapeHtml         = escapeHtml;
