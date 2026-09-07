@@ -689,8 +689,8 @@ function validarFormulario() {
   const isDelivery = tipoEntrega === 'delivery';
 
   const campos = isDelivery
-    ? ['nome-delivery', 'tel-delivery', 'endereco', 'numero', 'bairro', 'cidade', 'data-delivery', 'hora-delivery']
-    : ['nome-retirada', 'tel-retirada', 'data-retirada', 'hora-retirada'];
+    ? ['nome-delivery', 'tel-delivery', 'endereco', 'numero', 'bairro', 'data-delivery']
+    : ['nome-retirada', 'tel-retirada', 'data-retirada'];
 
   for (const id of campos) {
     const el = document.getElementById(id);
@@ -763,12 +763,10 @@ function enviarWhatsApp() {
     const numero   = document.getElementById('numero').value.trim();
     const bairro   = document.getElementById('bairro').value.trim();
     const compl    = document.getElementById('complemento').value.trim();
-    const cidade   = document.getElementById('cidade').value.trim();
     
     const rawData  = document.getElementById('data-delivery').value;
     const data     = formatarDataBR(rawData);
 
-    const hora     = document.getElementById('hora-delivery').value;
     const formaPag = document.getElementById('pagamento-delivery').value;
     const troco    = document.getElementById('troco-delivery').value.trim();
     const obs      = document.getElementById('obs-delivery').value.trim();
@@ -788,9 +786,8 @@ function enviarWhatsApp() {
     }
     msg += `\n\n*Endereco de entrega:*\n`;
     msg += `${endereco}, ${numero}${compl ? ' — ' + compl : ''}\n`;
-    msg += `${bairro} — ${cidade}\n\n`;
+    msg += `${bairro}\n\n`;
     msg += `*Data:* ${data}\n`;
-    msg += `*Horario:* ${hora}\n`;
     if (obs) msg += `\n*Observacoes:* ${obs}\n`;
   } else {
     const nome     = document.getElementById('nome-retirada').value.trim();
@@ -799,7 +796,6 @@ function enviarWhatsApp() {
     const rawData  = document.getElementById('data-retirada').value;
     const data     = formatarDataBR(rawData);
 
-    const hora     = document.getElementById('hora-retirada').value;
     const formaPag = document.getElementById('pagamento-retirada').value;
     const troco    = document.getElementById('troco-retirada').value.trim();
     const obs      = document.getElementById('obs-retirada').value.trim();
@@ -814,7 +810,6 @@ function enviarWhatsApp() {
       msg += ` (Troco para ${troco})`;
     }
     msg += `\n\n*Data:* ${data}\n`;
-    msg += `*Horario:* ${hora}\n`;
     if (obs) msg += `\n*Observacoes:* ${obs}\n`;
   }
 
