@@ -46,57 +46,147 @@ const PEDIDO_MINIMO_DELIVERY = 50.00;
 const DEFAULT_PRODUTOS = [
   {
     id: 'p1',
-    nome: 'Costela Bovina Inteira',
-    preco: 79.90,
+    nome: 'Costela Bovina Sem Osso (kg)',
+    preco: 100.00,
     categoria: 'costelas',
     ativo: true,
     img: 'assets/produtos/placeholder.jpg',
-    descricao: 'Costela assada no bafo por 12 horas, suculenta e macia.'
+    descricao: 'Assada lentamente por 15 horas no bafo, nossa costela bovina fica extremamente macia, suculenta e cheia de sabor, desmanchando a cada pedaço. Acompanha mandioca macia e saborosa. Serve de 4 a 6 pessoas.'
   },
   {
     id: 'p2',
-    nome: 'Costela de Porco Especial',
-    preco: 69.90,
+    nome: 'Costela Bovina Com Osso (kg)',
+    preco: 80.00,
     categoria: 'costelas',
     ativo: true,
     img: 'assets/produtos/placeholder.jpg',
-    descricao: 'Costela suína com tempero artesanal.'
+    descricao: 'Assada lentamente por 15 horas no bafo, nossa costela bovina fica extremamente macia, suculenta e cheia de sabor, desmanchando a cada pedaço. Serve de 4 a 6 pessoas.'
   },
   {
     id: 'p3',
-    nome: 'Arroz com Pimenta',
-    preco: 12.90,
-    categoria: 'acompanhamentos',
+    nome: 'Costelinha Suína (kg)',
+    preco: 75.00,
+    categoria: 'costelas',
     ativo: true,
     img: 'assets/produtos/placeholder.jpg',
-    descricao: 'Arroz temperado com pimenta e ervas.'
+    descricao: 'Costela suína temperada artesanalmente, assada até ficar macia e saborosa. Serve 3 a 4 pessoas.'
   },
   {
     id: 'p4',
-    nome: 'Vinagrete Caseiro',
-    preco: 8.90,
-    categoria: 'acompanhamentos',
+    nome: 'Pernil Suíno',
+    preco: 60.00,
+    categoria: 'costelas',
     ativo: true,
     img: 'assets/produtos/placeholder.jpg',
-    descricao: 'Vinagrete fresco com tomate, cebola e cheiro-verde.'
+    descricao: 'Corte suíno suculento e saboroso, assado lentamente até ficar macio por dentro e dourado por fora. Serve 3 a 4 pessoas.'
   },
   {
     id: 'p5',
-    nome: 'Refrigerante 2L',
-    preco: 10.00,
-    categoria: 'bebidas',
+    nome: 'Panceta (kg)',
+    preco: 60.00,
+    categoria: 'costelas',
     ativo: true,
     img: 'assets/produtos/placeholder.jpg',
-    descricao: 'Refrigerante gelado.'
+    descricao: 'Panceta suína temperada artesanalmente. Serve 2 a 3 pessoas.'
   },
   {
     id: 'p6',
-    nome: 'Combo Costela + Acompanhamento',
-    preco: 99.90,
-    categoria: 'combos',
+    nome: 'Linguiça Suína Caipira (kg)',
+    preco: 55.00,
+    categoria: 'costelas',
     ativo: true,
     img: 'assets/produtos/placeholder.jpg',
-    descricao: 'Costela + 2 acompanhamentos + bebida.'
+    descricao: 'Linguiça caipira temperada artesanalmente. Serve 3 a 4 pessoas.'
+  },
+  {
+    id: 'p7',
+    nome: 'Coxa e Sobrecoxa (un.)',
+    preco: 10.00,
+    categoria: 'costelas',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Coxa e sobrecoxa temperada artesanalmente, assada e cheia de sabor.'
+  },
+  {
+    id: 'p8',
+    nome: 'Feijão Tropeiro (G)',
+    preco: 30.00,
+    categoria: 'acompanhamentos',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Feijão tropeiro preparado artesanalmente, com sabor caseiro. Serve 3 a 4 pessoas.'
+  },
+  {
+    id: 'p9',
+    nome: 'Arroz Branco (G)',
+    preco: 20.00,
+    categoria: 'acompanhamentos',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Arroz branco soltinho e preparado na hora. Serve 3 a 4 pessoas.'
+  },
+  {
+    id: 'p10',
+    nome: 'Mandioca Temperada (G)',
+    preco: 20.00,
+    categoria: 'acompanhamentos',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Mandioca macia e bem cozida, temperada com ervas e temperos especiais, perfeita como acompanhamento para carnes e churrascos. Serve 4 a 5 pessoas.'
+  },
+  {
+    id: 'p11',
+    nome: 'Farofa da Casa (G)',
+    preco: 18.00,
+    categoria: 'acompanhamentos',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Farofa crocante e saborosa, com o tempero especial da casa. Serve 3 a 4 pessoas.'
+  },
+  {
+    id: 'p12',
+    nome: 'Feijão Tropeiro (P)',
+    preco: 18.00,
+    categoria: 'acompanhamentos',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Feijão tropeiro preparado artesanalmente, com sabor caseiro. Serve 1 a 2 pessoas.'
+  },
+  {
+    id: 'p13',
+    nome: 'Arroz Branco (P)',
+    preco: 10.00,
+    categoria: 'acompanhamentos',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Arroz branco soltinho e preparado na hora. Serve 1 a 2 pessoas.'
+  },
+  {
+    id: 'p14',
+    nome: 'Mandioca Temperada (P)',
+    preco: 10.00,
+    categoria: 'acompanhamentos',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Mandioca macia e bem cozida, temperada com temperos especiais, perfeita como acompanhamento para carnes e churrascos.'
+  },
+  {
+    id: 'p15',
+    nome: 'Coca-Cola 2L',
+    preco: 13.00,
+    categoria: 'bebidas',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Refrigerante Coca-Cola 2 litros, ideal para acompanhar sua refeição.'
+  },
+  {
+    id: 'p16',
+    nome: 'Guaraná Antarctica 2L',
+    preco: 11.00,
+    categoria: 'bebidas',
+    ativo: true,
+    img: 'assets/produtos/placeholder.jpg',
+    descricao: 'Refrigerante Guaraná Antarctica 2 litros, ideal para acompanhar sua refeição.'
   }
 ];
 
@@ -333,6 +423,14 @@ function renderProdutos(filtro = 'todos') {
     return;
   }
 
+  // Nomes das categorias para badges
+  const categoryNames = {
+    'costelas': '🥩 Carne',
+    'acompanhamentos': '🍚 Acompanhamento',
+    'bebidas': '🥤 Bebida',
+    'combos': '🔥 Combo'
+  };
+
   lista.forEach((p, i) => {
     const card = document.createElement('div');
     card.className = 'produto-card';
@@ -341,11 +439,13 @@ function renderProdutos(filtro = 'todos') {
     
     const nomeSeguro = escapeHtml(p.nome);
     const descSegura = p.descricao ? escapeHtml(p.descricao) : '';
+    const categoryBadge = categoryNames[p.categoria] || '';
     
     card.innerHTML = `
       <div class="produto-img-wrap" data-id="${p.id}" role="button" tabindex="0" aria-label="Ampliar imagem de ${nomeSeguro}">
         <img src="${p.img}" alt="${nomeSeguro}" loading="lazy" onerror="this.src='assets/produtos/placeholder.jpg'">
         <div class="produto-img-overlay"><span>🔍 Ampliar</span></div>
+        ${categoryBadge ? `<div class="produto-category-badge">${categoryBadge}</div>` : ''}
       </div>
       <div class="produto-info">
         <div class="produto-nome">${nomeSeguro}</div>
