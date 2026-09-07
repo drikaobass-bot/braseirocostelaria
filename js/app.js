@@ -689,8 +689,8 @@ function validarFormulario() {
   const isDelivery = tipoEntrega === 'delivery';
 
   const campos = isDelivery
-    ? ['nome-delivery', 'tel-delivery', 'endereco', 'numero', 'bairro']
-    : ['nome-retirada', 'tel-retirada'];
+    ? ['nome-delivery', 'tel-delivery', 'endereco', 'numero', 'bairro', 'data-delivery']
+    : ['nome-retirada', 'tel-retirada', 'data-retirada'];
 
   for (const id of campos) {
     const el = document.getElementById(id);
