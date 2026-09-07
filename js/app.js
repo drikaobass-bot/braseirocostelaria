@@ -689,8 +689,8 @@ function validarFormulario() {
   const isDelivery = tipoEntrega === 'delivery';
 
   const campos = isDelivery
-    ? ['nome-delivery', 'tel-delivery', 'endereco', 'numero', 'bairro', 'data-delivery']
-    : ['nome-retirada', 'tel-retirada', 'data-retirada'];
+    ? ['nome-delivery', 'tel-delivery', 'endereco', 'numero', 'bairro']
+    : ['nome-retirada', 'tel-retirada'];
 
   for (const id of campos) {
     const el = document.getElementById(id);
@@ -764,9 +764,7 @@ function enviarWhatsApp() {
     const bairro   = document.getElementById('bairro').value.trim();
     const compl    = document.getElementById('complemento').value.trim();
     
-    const rawData  = document.getElementById('data-delivery').value;
-    const data     = formatarDataBR(rawData);
-
+    const data = document.getElementById('data-delivery').value.trim();
     const formaPag = document.getElementById('pagamento-delivery').value;
     const troco    = document.getElementById('troco-delivery').value.trim();
     const obs      = document.getElementById('obs-delivery').value.trim();
@@ -793,8 +791,7 @@ function enviarWhatsApp() {
     const nome     = document.getElementById('nome-retirada').value.trim();
     const tel      = document.getElementById('tel-retirada').value.trim();
     
-    const rawData  = document.getElementById('data-retirada').value;
-    const data     = formatarDataBR(rawData);
+    const data = document.getElementById('data-retirada').value.trim();
 
     const formaPag = document.getElementById('pagamento-retirada').value;
     const troco    = document.getElementById('troco-retirada').value.trim();
